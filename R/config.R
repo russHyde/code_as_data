@@ -7,10 +7,10 @@
 
 config <- list(
   # Store results summaries here:
-  results_dir = file.path("results"),
+  results_dir = here("results"),
 
   # Store results for individual packages in subdirs of this:
-  pkg_results_dir = file.path("results", "packages"),
+  pkg_results_dir = here("results", "packages"),
 
   repo_dir = normalizePath(
     file.path("~", "temp", "dev-tools-analysis"),

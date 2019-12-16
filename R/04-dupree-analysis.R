@@ -99,8 +99,9 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
 
 ###############################################################################
 
-source("utils.R")
-source("config.R")
+library("here")
+source(here("R", "utils.R"))
+source(here("R", "config.R"))
 
 ###############################################################################
 

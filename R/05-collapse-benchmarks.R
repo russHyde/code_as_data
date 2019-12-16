@@ -33,9 +33,9 @@ main <- function(
   )
 
   # For each repo, there is a .rds file containing bench::press results
-  # 
+  #
   # Combine these results into a single table
-  
+
   pkg_timings_paths <- define_pkg_timings_paths(
     repo_details[["package"]], pkg_results_dir
   )
@@ -45,7 +45,7 @@ main <- function(
     pkg_timings_paths[["package"]],
     pkg_timings_paths[["path"]]
   )
-  
+
   # Combine the benchmark data for each package into a single table
   # - we suppress the `Vectorizing 'bench_time' ...` warnings
   summarised_results <- suppressWarnings(
@@ -57,8 +57,9 @@ main <- function(
 
 ###############################################################################
 
-source("utils.R")
-source("config.R")
+library("here")
+source(here("R", "utils.R"))
+source(here("R", "config.R"))
 
 ###############################################################################
 
@@ -74,7 +75,7 @@ main(
   output_file = config[["all_pkg_benchmarks_file"]]
 )
 
-# 
+#
 # ggplot(df, aes(x = median, y = factor(package, levels =
 #   unique(package[order(median)])))) + geom_point(aes(col = min_block_size))
 

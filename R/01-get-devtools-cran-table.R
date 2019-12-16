@@ -83,8 +83,9 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
 
 ###############################################################################
 
-source("utils.R")
-source("config.R")
+library("here")
+source(here("R", "utils.R"))
+source(here("R", "config.R"))
 
 ###############################################################################
 
