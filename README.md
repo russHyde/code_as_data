@@ -10,6 +10,16 @@ conda create --name code_as_data --file envs/requirements.txt
 conda env create --file envs/environment.yml
 ```
 
+Some of the packages used in this project are not on anaconda, CRAN or
+Bioconductor
+
+```
+# In R:
+library(devtools)
+devtools::install_github("hrbmstr/cloc", dependencies = FALSE)
+```
+
+
 ----
 
 Then make the results folders:

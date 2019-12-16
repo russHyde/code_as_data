@@ -33,14 +33,19 @@ config <- list(
 config <- append(
   config,
   list(
+    # The next three files only store data for the repositories that we are
+    # going to analyse here
     repo_details_file = file.path(
-      config[["results_dir"]], "dev-pkg-respositories.tsv"
+      config[["results_dir"]], "dev-pkg-repositories.tsv"
     ),
     cran_details_file = file.path(
       config[["results_dir"]], "dev-pkg-table.tsv"
     ),
     all_pkg_benchmarks_file = file.path(
       config[["results_dir"]], "dev-pkg-benchmarks.tsv"
+    ),
+    all_pkg_cloc_file = file.path(
+      config[["results_dir"]], "dev-pkg-cloc.tsv"
     )
   )
 )
