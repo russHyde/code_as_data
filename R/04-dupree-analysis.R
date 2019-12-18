@@ -73,9 +73,7 @@ run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
 
 main <- function(repo_details_file, results_dir, min_block_sizes) {
 
-  repo_details <- readr::read_tsv(
-    repo_details_file, col_types = readr::cols(.default = "c")
-  )
+  repo_details <- read_repo_details(repo_details_file)
 
   # For each repo,
   # For each min_block_size in some set

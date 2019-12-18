@@ -28,9 +28,7 @@ collapse_benchmarks <- function(tables) {
 main <- function(
     repo_details_file, results_dir, pkg_results_dir, output_file
 ) {
-  repo_details <- readr::read_tsv(
-    repo_details_file, col_types = readr::cols(.default = "c")
-  )
+  repo_details <- read_repo_details(repo_details_file)
 
   # For each repo, there is a .rds file containing bench::press results
   #

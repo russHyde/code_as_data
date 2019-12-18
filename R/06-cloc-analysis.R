@@ -23,7 +23,7 @@ format_cloc <- function(df) {
 ###############################################################################
 
 main <- function(repo_details_file, results_file) {
-  repo_details <- readr::read_tsv(repo_details_file)
+  repo_details <- read_repo_details(repo_details_file)
 
   cloc_results <- repo_details %>%
     get_cloc_details() %>%

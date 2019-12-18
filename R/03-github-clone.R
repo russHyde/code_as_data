@@ -19,9 +19,7 @@ main <- function(repo_details_file) {
   # local-repo) and clones each package from it's remote location to the
   # specified local location.
 
-  repo_details <- readr::read_tsv(
-    repo_details_file, col_types = readr::cols(.default = "c")
-  )
+  repo_details <- read_repo_details(repo_details_file)
 
   # Columns of `repo_details`:
   # (package, remote_repo, local_repo)

@@ -8,4 +8,8 @@ load_packages <- function(pkgs) {
   }
 }
 
+read_repo_details <- function(repo_details_file) {
+  readr::read_tsv(repo_details_file, col_types = "ccc")
+}
+
 ###############################################################################
