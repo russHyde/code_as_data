@@ -25,9 +25,15 @@ config <- list(
 
   min_block_sizes = c(100, 40), #, 20, 10)
 
-  # The github repo for package `logging` does not conform to standard R
-  # package structure, and causes dupree to fail.
-  drop = "logging"
+  # {logging} The github repo for package `logging` does not conform to
+  # standard R package structure, and causes dupree to fail.
+  #
+  # {R.oo} The ./R/ directory of R.oo contains a filename with a comma in it
+  # "020.makeObjectFinalizer,private.R". This causes {cloc}::cloc_by_file to
+  # fail (because the cloc-results are read in as .csv format)
+  drop = c(
+    "logging", "R.oo"
+  )
 )
 
 config <- append(

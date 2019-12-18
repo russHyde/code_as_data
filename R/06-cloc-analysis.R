@@ -6,18 +6,20 @@
 ###############################################################################
 
 get_cloc_details <- function(repo_details) {
+  # We only analyse the contents of the ./R/ directory in the repo
   Map(
-    function(pkg, path) cloc::cloc(path),
+    function(pkg, path) {
+      cloc::cloc_by_file(file.path(path, "R"))
+    },
     repo_details[["package"]],
     repo_details[["local_repo"]]
   ) %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows(.id = "package")
 }
 
 format_cloc <- function(df) {
   df %>%
-    dplyr::filter(language == "R") %>%
-    dplyr::rename(package = source)
+    dplyr::filter(language == "R")
 }
 
 ###############################################################################
@@ -53,5 +55,10 @@ main(
 )
 
 # ggplot(cloc, aes(x = reorder(package, loc), y = log2(loc))) + geom_col()
-
+#
+# ggplot(
+#   filter(tab, loc > 0),
+#   aes(x = reorder(package, loc), y = log(loc))
+#   ) +
+#   geom_boxplot()
 ###############################################################################
