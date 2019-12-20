@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Ensure the environment is activated
 
@@ -9,7 +10,7 @@ fi
 
 # Ensure the results directories are set up
 
-for dir in results results/packages; do
+for dir in "results" "results/packages"; do
   if [[ ! -d "${dir}" ]]; then mkdir "${dir}"; fi
 done
 
