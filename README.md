@@ -10,6 +10,12 @@ conda create --name code_as_data --file envs/requirements.txt
 conda env create --file envs/environment.yml
 ```
 
+Activate the environment
+
+```
+conda activate code_as_data
+```
+
 Some of the packages used in this project are not on anaconda, CRAN or
 Bioconductor
 
@@ -19,22 +25,20 @@ library(devtools)
 devtools::install_github("hrbmstr/cloc", dependencies = FALSE)
 ```
 
-
 ----
 
-Then make the results folders:
+To run the analysis:
+
+First activate the conda environment (if you haven't already)
 
 ```
-mkdir results results/packages
+conda activate code_as_data
 ```
 
-----
-
-Then run the scripts in turn:
+Then use the bash script to run the workflow (this will make any results
+directories that are missing)
 
 ```
-Rscript R/01-*.R
-Rscript R/02-*.R
-...
+./run_me.sh
 ```
 

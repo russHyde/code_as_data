@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 
+# Ensure the environment is activated
+
 if [[ $(basename "${CONDA_PREFIX}") != "code_as_data" ]]; then
   echo "Retry with CONDA env 'code_as_data'" >&2
   exit 1
 fi
+
+# Ensure the results directories are set up
+
+for dir in results results/packages; do
+  if [[ ! -d "${dir}" ]]; then mkdir "${dir}"; fi
+done
+
+# Run each step of the analysis:
 
 Rscript R/01-get-devtools-cran-table.R
 
