@@ -33,6 +33,13 @@ config <- list(
   # fail (because the cloc-results are read in as .csv format)
   drop = c(
     "logging", "R.oo"
+  ),
+
+  # which packages should be installed from github?
+  # - any dependencies for these packages should already be installed to the
+  # conda environment
+  remotes = c(
+    "hrbrmstr/cloc", "lorenzwalthert/gitsum"
   )
 )
 

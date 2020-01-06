@@ -14,6 +14,10 @@ for dir in "results" "results/packages"; do
   if [[ ! -d "${dir}" ]]; then mkdir "${dir}"; fi
 done
 
+# Install any non-conda R-dependencies
+
+Rscript R/00-setup-env.R
+
 # Run each step of the analysis:
 
 Rscript R/01-get-devtools-cran-table.R
@@ -28,3 +32,6 @@ Rscript R/05-collapse-benchmarks.R
 
 Rscript R/06-cloc-analysis.R
 
+# Make the report
+
+echo "TODO: compile an Rmarkdown report of the results" >&2
