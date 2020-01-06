@@ -46,8 +46,8 @@ config <- list(
 config <- append(
   config,
   list(
-    # The next three files only store data for the repositories that we are
-    # going to analyse here
+    # These files only store data for the repositories that we are going to
+    # analyse here
     repo_details_file = file.path(
       config[["results_dir"]], "dev-pkg-repositories.tsv"
     ),
@@ -59,6 +59,9 @@ config <- append(
     ),
     all_pkg_cloc_file = file.path(
       config[["results_dir"]], "dev-pkg-cloc.tsv"
+    ),
+    all_pkg_gitsum_file = file.path(
+      config[["results_dir"]], "dev-pkg-gitsum.tsv"
     )
   )
 )

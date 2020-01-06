@@ -32,6 +32,8 @@ Rscript R/05-collapse-benchmarks.R
 
 Rscript R/06-cloc-analysis.R
 
+Rscript R/07-gitsum-analysis.R
+
 # Make the report
 
 echo "TODO: compile an Rmarkdown report of the results" >&2
