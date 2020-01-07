@@ -185,6 +185,7 @@ https://conda.anaconda.org/conda-forge/noarch/r-desc-1.2.0-r35h6115d3f_1002.tar.
 https://conda.anaconda.org/conda-forge/noarch/r-here-0.1-r35h6115d3f_1002.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/r-htmlwidgets-1.5.1-r35h6115d3f_0.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/r-knitr-1.26-r35h6115d3f_0.tar.bz2
+https://conda.anaconda.org/conda-forge/linux-64/r-lubridate-1.7.4-r35h0357c0b_1002.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/r-mgcv-1.8_29-r35hcdcec82_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/r-openssl-1.4.1-r35h9c8475f_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/r-promises-1.1.0-r35h0357c0b_0.tar.bz2

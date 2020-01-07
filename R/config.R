@@ -33,14 +33,21 @@ config <- list(
   # fail (because the cloc-results are read in as .csv format)
   drop = c(
     "logging", "R.oo"
+  ),
+
+  # which packages should be installed from github?
+  # - any dependencies for these packages should already be installed to the
+  # conda environment
+  remotes = c(
+    "hrbrmstr/cloc", "lorenzwalthert/gitsum"
   )
 )
 
 config <- append(
   config,
   list(
-    # The next three files only store data for the repositories that we are
-    # going to analyse here
+    # These files only store data for the repositories that we are going to
+    # analyse here
     repo_details_file = file.path(
       config[["results_dir"]], "dev-pkg-repositories.tsv"
     ),
@@ -52,6 +59,9 @@ config <- append(
     ),
     all_pkg_cloc_file = file.path(
       config[["results_dir"]], "dev-pkg-cloc.tsv"
+    ),
+    all_pkg_gitsum_file = file.path(
+      config[["results_dir"]], "dev-pkg-gitsum.tsv"
     )
   )
 )

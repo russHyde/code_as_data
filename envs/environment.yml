@@ -139,6 +139,7 @@ dependencies:
   - r-lazyeval=0.2.2
   - r-lifecycle=0.1.0
   - r-lintr=2.0.0
+  - r-lubridate=1.7.4
   - r-magrittr=1.5
   - r-markdown=1.1
   - r-mass=7.3_51.4

@@ -16,14 +16,10 @@ Activate the environment
 conda activate code_as_data
 ```
 
-Some of the packages used in this project are not on anaconda, CRAN or
-Bioconductor
-
-```
-# In R:
-library(devtools)
-devtools::install_github("hrbmstr/cloc", dependencies = FALSE)
-```
+Some of the R packages used in this project are not on anaconda, CRAN or
+Bioconductor. These are installed by the script `R/00-setup-env.R`. See
+the 'remotes' entry in the config for details of the packages that are
+installed in this way.
 
 ----
 
@@ -36,7 +32,7 @@ conda activate code_as_data
 ```
 
 Then use the bash script to run the workflow (this will make any results
-directories that are missing)
+directories that are missing and install any non-conda dependencies)
 
 ```
 ./run_me.sh
