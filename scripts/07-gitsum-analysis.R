@@ -1,5 +1,16 @@
 ###############################################################################
 
+# pkgs require for running the script (not the packages that are analysed here)
+pkgs <-  c("here", "dplyr", "gitsum", "magrittr", "readr", "stringr", "tidyr")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 get_gitsum_results <- function(repo_details) {
    Map(
     function(pkg, path) {
@@ -37,12 +48,8 @@ main <- function(repo_details_file, results_file) {
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
-
-# pkgs require for running the script (not the packages that are analysed here)
-load_packages(c("dplyr", "gitsum", "magrittr", "readr", "stringr", "tidyr"))
+source(here("scripts", "utils.R"))
+source(here("scripts", "config.R"))
 
 main(
   repo_details_file = config[["repo_details_file"]],

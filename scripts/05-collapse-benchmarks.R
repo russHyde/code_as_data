@@ -1,5 +1,16 @@
 ###############################################################################
 
+# pkgs require for running the script (not the packages that are analysed here)
+pkgs <- c("here", "bench", "dplyr", "magrittr", "purrr", "readr", "tibble")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 define_pkg_timings_paths <- function(packages, pkg_results_dir) {
   tibble(
     package = packages,
@@ -10,15 +21,15 @@ define_pkg_timings_paths <- function(packages, pkg_results_dir) {
 ###############################################################################
 
 format_benchmark <- function(table) {
-  list_cols <- which(map_lgl(table, is.list))
+  list_cols <- which(purrr::map_lgl(table, is.list))
   table[, list_cols] <- NA
-  as_tibble(table)
+  tibble::as_tibble(table)
 }
 
 collapse_benchmarks <- function(tables) {
   # should be a named list of bench::press result tables
   stopifnot(is.list(tables) && !is.null(names(tables)))
-  map_df(tables, format_benchmark, .id = "package")
+  purrr::map_df(tables, format_benchmark, .id = "package")
 }
 
 ###############################################################################
@@ -55,16 +66,10 @@ main <- function(
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
+source(here("scripts", "utils.R"))
+source(here("scripts", "config.R"))
 
 ###############################################################################
-
-# pkgs require for running the script (not the packages that are analysed here)
-load_packages(
-  c("bench", "dplyr", "magrittr", "purrr", "readr", "tibble")
-)
 
 main(
   repo_details_file = config[["repo_details_file"]],
