@@ -17,8 +17,8 @@ conda activate code_as_data
 ```
 
 Some of the R packages used in this project are not on anaconda, CRAN or
-Bioconductor. These are installed by the script `R/00-setup-env.R`. See
-the 'remotes' entry in the config for details of the packages that are
+Bioconductor. These are installed by the script `scripts/00-setup-env.R`.
+See the 'remotes' entry in the config for details of the packages that are
 installed in this way.
 
 ----
