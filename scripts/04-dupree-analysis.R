@@ -59,7 +59,9 @@ run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
   message("Running dupree workflow for: ", package)
 
   pkg_results_dir <- file.path(results_dir, package)
-  dir.create(pkg_results_dir)
+  if (! dir.exists(pkg_results_dir)) {
+    dir.create(pkg_results_dir)
+  }
 
   # -- obtain / save the duplicated code-block results
   #
@@ -87,6 +89,8 @@ run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
 
 main <- function(repo_details_file, results_dir, min_block_sizes) {
 
+  stopifnot(is.numeric(min_block_sizes))
+
   repo_details <- read_repo_details(repo_details_file)
 
   # For each repo,
@@ -102,7 +106,7 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
   for (i in seq_len(nrow(repo_details))) {
     run_workflow(
       repo_details$package[i],
-      repo_details$local_repo[i],
+      normalizePath(repo_details$local_repo[i]),
       results_dir,
       min_block_sizes
     )
