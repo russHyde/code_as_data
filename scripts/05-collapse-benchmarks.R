@@ -1,7 +1,9 @@
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-pkgs <- c("here", "bench", "dplyr", "magrittr", "purrr", "readr", "tibble")
+pkgs <- c(
+  "here", "bench", "dplyr", "magrittr", "purrr", "readr", "tibble", "yaml"
+)
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -67,15 +69,14 @@ main <- function(
 ###############################################################################
 
 source(here("scripts", "utils.R"))
-source(here("scripts", "config.R"))
 
-###############################################################################
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 main(
-  repo_details_file = config[["repo_details_file"]],
-  results_dir = config[["results_dir"]],
-  pkg_results_dir = config[["pkg_results_dir"]],
-  output_file = config[["all_pkg_benchmarks_file"]]
+  repo_details_file = here(config[["repo_details_file"]]),
+  results_dir = here(config[["results_dir"]]),
+  pkg_results_dir = here(config[["pkg_results_dir"]]),
+  output_file = here(config[["all_pkg_benchmarks_file"]])
 )
 
 #

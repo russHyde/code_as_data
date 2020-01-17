@@ -72,6 +72,7 @@ dependencies:
   - pixman=0.38.0
   - pthread-stubs=0.4
   - python=3.8.0
+  - pyyaml=5.3
   - qt=5.6.3
   - r-askpass=1.1
   - r-assertthat=0.2.1
@@ -224,6 +225,7 @@ dependencies:
   - readline=8.0
   - rstudio=1.1.456
   - setuptools=42.0.2
+  - shyaml=0.6.1
   - sqlite=3.30.1
   - tk=8.6.10
   - tktable=2.10
@@ -241,6 +243,7 @@ dependencies:
   - xorg-xextproto=7.3.0
   - xorg-xproto=7.0.31
   - xz=5.2.4
+  - yaml=0.2.2
   - zlib=1.2.11
   - zstd=1.4.4
 prefix: /home/ah327h/tools/miniconda3/envs/code_as_data

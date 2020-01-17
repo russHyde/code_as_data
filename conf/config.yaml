@@ -1,0 +1,56 @@
+---
+
+# ===================== #
+
+# -- Directories and filepaths
+
+# Store results summaries here
+results_dir: results
+
+# Store results for individual packages in subdirs of this:
+pkg_results_dir: results/packages
+
+# Save the raw repositories in subdirs of this:
+repo_dir: ~/temp/dev-tools-analysis
+
+# -- -- results files
+
+repo_details_file:        "results/dev-pkg-repositories.tsv"
+cran_details_file:        "results/dev-pkg-table.tsv"
+all_pkg_benchmarks_file:  "results/dev-pkg-benchmarks.tsv"
+all_pkg_cloc_file:        "results/dev-pkg-cloc.tsv"
+all_pkg_gitsum_file:      "results/dev-pkg-gitsum.tsv"
+
+# ===================== #
+
+# -- Definition of which packages should be analysed
+
+# A CRAN-task-view style document that includes a range of package-development
+# tools
+task_view_url: https://raw.githubusercontent.com/ropensci/PackageDevelopment/master/PackageDevelopment.ctv
+
+# Which packages are found on CRAN and in the task-view file, but should not be
+# analysed here:
+#
+# {logging} - The github repo for {logging} does not conform to standard R
+# package structure, and causes dupree to fail
+#
+# {R.oo} - The ./R/ directory of {R.oo} contains a filename with a comman in it
+# "020.makeObjectFinalizer,private.R". This causes {cloc}::cloc_by_file to fail
+# (because the cloc-results are read in as .csv format)
+drop: ["logging", "R.oo"]
+
+# Which packages must be installed from github for the analyses to be able to
+# run? ["gh_username/repo_name", ...]
+# - any dependencies of these packages should already be installed to the conda
+# environment
+remotes: ["hrbrmstr/cloc", "lorenzwalthert/gitsum"]
+
+# ===================== #
+
+# -- Parameters for the analyses
+
+# -- -- {dupree}
+# Lower bounds for code-block size used in the duplicate-analyses:
+min_block_sizes: [100, 40]
+...
