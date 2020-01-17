@@ -21,23 +21,23 @@ done
 
 # Install any non-conda R-dependencies
 
-Rscript "scripts/00-setup-r-env.R"
+Rscript "scripts/00-setup-r-env.R" --config "${config_file}"
 
 # Run each step of the analysis:
 
-Rscript "scripts/01-get-devtools-cran-table.R"
+Rscript "scripts/01-get-devtools-cran-table.R" --config "${config_file}"
 
-Rscript "scripts/02-github-details.R"
+Rscript "scripts/02-github-details.R" --config "${config_file}"
 
-Rscript "scripts/03-github-clone.R"
+Rscript "scripts/03-github-clone.R" --config "${config_file}"
 
-Rscript "scripts/04-dupree-analysis.R"
+Rscript "scripts/04-dupree-analysis.R" --config "${config_file}"
 
-Rscript "scripts/05-collapse-benchmarks.R"
+Rscript "scripts/05-collapse-benchmarks.R" --config "${config_file}"
 
-Rscript "scripts/06-cloc-analysis.R"
+Rscript "scripts/06-cloc-analysis.R" --config "${config_file}"
 
-Rscript "scripts/07-gitsum-analysis.R"
+Rscript "scripts/07-gitsum-analysis.R" --config "${config_file}"
 
 # Make the report
 

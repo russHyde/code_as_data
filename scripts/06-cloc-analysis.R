@@ -6,12 +6,36 @@
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-pkgs <-  c("here", "cloc", "dplyr", "magrittr", "purrr", "readr", "yaml")
+general_pkgs <- c("here", "magrittr", "optparse", "yaml")
+pkgs <-  c(general_pkgs, "cloc", "dplyr", "purrr", "readr")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
     library(pkg, character.only = TRUE)
   )
+}
+
+###############################################################################
+
+define_parser <- function() {
+  description <- paste(
+    "Count the number of lines of code for each R-source file in a repository.",
+    "This only considers files that are in the ./R/ subdirectory of an R",
+    "package structure."
+  )
+
+  parser <- OptionParser(
+    description = description
+  ) %>%
+    add_option(
+      c("--config"), type = "character",
+      help = paste(
+        "A .yaml file containing the configuration details for the workflow.",
+        "The .yaml should contain fields for the keys:",
+        "- 'repo_details_file' (package,remote_repo,local_repo);",
+        "- 'all_pkg_cloc_file' (the single output file for this script)"
+      )
+    )
 }
 
 ###############################################################################
@@ -53,7 +77,8 @@ main <- function(repo_details_file, results_file) {
 
 source(here("scripts", "utils.R"))
 
-config <- yaml::read_yaml(here("conf", "config.yaml"))
+opt <- optparse::parse_args(define_parser())
+config <- yaml::read_yaml(opt$config)
 
 main(
   repo_details_file = here(config[["repo_details_file"]]),
@@ -67,4 +92,5 @@ main(
 #   aes(x = reorder(package, loc), y = log(loc))
 #   ) +
 #   geom_boxplot()
+
 ###############################################################################

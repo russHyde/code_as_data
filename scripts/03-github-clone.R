@@ -1,16 +1,35 @@
 ###############################################################################
 
-# Download lots of R packages from remote to local repositories
-
-###############################################################################
-
-# pkgs require for running the script (not the packages that are analysed here)
-pkgs <- c("here", "dplyr", "git2r", "magrittr", "purrr", "readr", "yaml")
+# pkgs required for running the script
+general_pkgs <- c("here", "magrittr", "optparse", "yaml")
+pkgs <- c(general_pkgs, "dplyr", "git2r", "purrr", "readr")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
     library(pkg, character.only = TRUE)
   )
+}
+
+###############################################################################
+
+define_parser <- function() {
+  description <- paste(
+    "Download lots of R packages from a remote to a local location.",
+    "For each package mentioned in a file, this downloads the github repo",
+    "from a remote to a local location."
+  )
+
+  parser <- OptionParser(
+    description = description
+  ) %>%
+    add_option(
+      c("--config"), type = "character",
+      help = paste(
+        "A .yaml file containing the configuration details for the workflow.",
+        "The .yaml should contain fields for the keys:",
+        "- 'repo_details_file' (package,remote_repo,local_repo)."
+      )
+    )
 }
 
 ###############################################################################
@@ -47,7 +66,8 @@ main <- function(repo_details_file) {
 
 source(here("scripts", "utils.R"))
 
-config <- yaml::read_yaml(here("conf", "config.yaml"))
+opt <- optparse::parse_args(define_parser())
+config <- yaml::read_yaml(opt$config)
 
 main(
   repo_details_file = here(config[["repo_details_file"]])
