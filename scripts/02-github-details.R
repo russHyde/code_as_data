@@ -1,5 +1,16 @@
 ###############################################################################
 
+# pkgs require for running the script (not the packages that are analysed here)
+pkgs <- c("here", "dplyr", "magrittr", "readr", "stringr", "tibble")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 get_repo_from_comma_sepd_string <- function(x) {
   # input could be
   # "http[s]://[www.]github.com/<user>/<repo>[/issues][,] some-other-url"
@@ -106,14 +117,9 @@ main <- function(cran_details_file, repo_dir, results_file) {
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
+source(here("scripts", "config.R"))
 
 ###############################################################################
-
-# pkgs require for running the script (not the packages that are analysed here)
-load_packages(c("dplyr", "magrittr", "readr", "stringr", "tibble"))
 
 run_tests()
 

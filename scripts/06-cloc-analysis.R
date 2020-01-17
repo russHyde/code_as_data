@@ -5,6 +5,17 @@
 
 ###############################################################################
 
+# pkgs require for running the script (not the packages that are analysed here)
+pkgs <-  c("here", "cloc", "dplyr", "magrittr", "purrr", "readr")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 get_cloc_details <- function(repo_details) {
   # We only analyse the contents of the ./R/ directory in the repo
   Map(
@@ -40,14 +51,8 @@ main <- function(repo_details_file, results_file) {
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
-
-# pkgs require for running the script (not the packages that are analysed here)
-load_packages(
-  c("cloc", "dplyr", "magrittr", "purrr", "readr")
-)
+source(here("scripts", "utils.R"))
+source(here("scripts", "config.R"))
 
 main(
   repo_details_file = config[["repo_details_file"]],

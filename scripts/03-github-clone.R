@@ -4,6 +4,17 @@
 
 ###############################################################################
 
+# pkgs require for running the script (not the packages that are analysed here)
+pkgs <- c("here", "dplyr", "git2r", "magrittr", "purrr", "readr")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 clone_repositories <- function(x) {
   # Clone each package from its remote to its local repo (but only if we
   # haven't already cloned it)
@@ -34,14 +45,12 @@ main <- function(repo_details_file) {
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
+source(here("scripts", "utils.R"))
+source(here("scripts", "config.R"))
 
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-load_packages(c("dplyr", "git2r", "magrittr", "purrr", "readr"))
 
 main(
   repo_details_file = config[["repo_details_file"]]

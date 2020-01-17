@@ -3,6 +3,16 @@
 
 ###############################################################################
 
+pkgs <- c("here", "devtools")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 main <- function(remotes) {
   for (package in remotes) {
     devtools::install_github(package, dependencies = FALSE)
@@ -11,10 +21,7 @@ main <- function(remotes) {
 
 ###############################################################################
 
-library("here")
-library("devtools")
-
-source(here("R", "config.R"))
+source(here("scripts", "config.R"))
 
 main(
   remotes = config[["remotes"]]

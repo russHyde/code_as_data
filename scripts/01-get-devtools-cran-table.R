@@ -1,5 +1,15 @@
 ###############################################################################
 
+pkgs <- c("here", "dplyr", "janitor", "tibble", "magrittr", "readr", "xml2")
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 contains_github <- function(x) {
   grepl("github\\.com", x)
 }
@@ -83,16 +93,9 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
+source(here("scripts", "config.R"))
 
 ###############################################################################
-
-# pkgs require for running the script (not the packages that are analysed here)
-load_packages(
-  c("dplyr", "janitor", "tibble", "magrittr", "readr", "xml2")
-)
 
 main(
   task_view_url = config[["task_view_url"]],

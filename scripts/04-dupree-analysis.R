@@ -1,5 +1,18 @@
 ###############################################################################
 
+# pkgs require for running the script (not the packages that are analysed here)
+pkgs <- c(
+  "here", "bench", "dplyr", "dupree", "git2r", "magrittr", "readr", "tibble"
+)
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+
+###############################################################################
+
 run_benchmark_workflow <- function(local_repo, results_file, min_block_sizes) {
   #  TODO: fix this error in the benchmark calls
   #   - it appears to be due to calling `write_tsv` on a benchmark tibble
@@ -97,16 +110,10 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
 
 ###############################################################################
 
-library("here")
-source(here("R", "utils.R"))
-source(here("R", "config.R"))
+source(here("scripts", "utils.R"))
+source(here("scripts", "config.R"))
 
 ###############################################################################
-
-# pkgs require for running the script (not the packages that are analysed here)
-load_packages(
-  c("bench", "dplyr", "dupree", "git2r", "magrittr", "readr", "tibble")
-)
 
 main(
   repo_details_file = config[["repo_details_file"]],
