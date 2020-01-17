@@ -6,7 +6,7 @@
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-pkgs <-  c("here", "cloc", "dplyr", "magrittr", "purrr", "readr")
+pkgs <-  c("here", "cloc", "dplyr", "magrittr", "purrr", "readr", "yaml")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -52,11 +52,12 @@ main <- function(repo_details_file, results_file) {
 ###############################################################################
 
 source(here("scripts", "utils.R"))
-source(here("scripts", "config.R"))
+
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 main(
-  repo_details_file = config[["repo_details_file"]],
-  results_file = config[["all_pkg_cloc_file"]]
+  repo_details_file = here(config[["repo_details_file"]]),
+  results_file = here(config[["all_pkg_cloc_file"]])
 )
 
 # ggplot(cloc, aes(x = reorder(package, loc), y = log2(loc))) + geom_col()

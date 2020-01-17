@@ -3,7 +3,7 @@
 
 ###############################################################################
 
-pkgs <- c("here", "devtools")
+pkgs <- c("here", "devtools", "yaml")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -21,7 +21,7 @@ main <- function(remotes) {
 
 ###############################################################################
 
-source(here("scripts", "config.R"))
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 main(
   remotes = config[["remotes"]]

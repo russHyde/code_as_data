@@ -1,7 +1,7 @@
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-pkgs <- c("here", "dplyr", "magrittr", "readr", "stringr", "tibble")
+pkgs <- c("here", "dplyr", "magrittr", "readr", "stringr", "tibble", "yaml")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -117,16 +117,16 @@ main <- function(cran_details_file, repo_dir, results_file) {
 
 ###############################################################################
 
-source(here("scripts", "config.R"))
-
-###############################################################################
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 run_tests()
 
 main(
-  cran_details_file = config[["cran_details_file"]],
+  cran_details_file = here(config[["cran_details_file"]]),
+  # TODO: use here() and make it the users' responsibility to link from ./data
+  # to an appropriate storage directory
   repo_dir = config[["repo_dir"]],
-  results_file = config[["repo_details_file"]]
+  results_file = here(config[["repo_details_file"]])
 )
 
 ###############################################################################

@@ -1,7 +1,9 @@
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-pkgs <-  c("here", "dplyr", "gitsum", "magrittr", "readr", "stringr", "tidyr")
+pkgs <-  c(
+  "here", "dplyr", "gitsum", "magrittr", "readr", "stringr", "tidyr", "yaml"
+)
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -49,11 +51,12 @@ main <- function(repo_details_file, results_file) {
 ###############################################################################
 
 source(here("scripts", "utils.R"))
-source(here("scripts", "config.R"))
+
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 main(
-  repo_details_file = config[["repo_details_file"]],
-  results_file = config[["all_pkg_gitsum_file"]]
+  repo_details_file = here(config[["repo_details_file"]]),
+  results_file = here(config[["all_pkg_gitsum_file"]])
 )
 
 ###############################################################################

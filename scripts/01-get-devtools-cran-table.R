@@ -1,6 +1,8 @@
 ###############################################################################
 
-pkgs <- c("here", "dplyr", "janitor", "tibble", "magrittr", "readr", "xml2")
+pkgs <- c(
+  "here", "dplyr", "janitor", "tibble", "magrittr", "readr", "xml2", "yaml"
+)
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -93,13 +95,11 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
 
 ###############################################################################
 
-source(here("scripts", "config.R"))
-
-###############################################################################
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 main(
   task_view_url = config[["task_view_url"]],
-  results_file = config[["cran_details_file"]],
+  results_file = here(config[["cran_details_file"]]),
   drop_pkgs = config[["drop"]]
 )
 

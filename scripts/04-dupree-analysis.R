@@ -2,7 +2,8 @@
 
 # pkgs require for running the script (not the packages that are analysed here)
 pkgs <- c(
-  "here", "bench", "dplyr", "dupree", "git2r", "magrittr", "readr", "tibble"
+  "here", "bench", "dplyr", "dupree", "git2r", "magrittr", "readr", "tibble",
+  "yaml"
 )
 
 for (pkg in pkgs) {
@@ -111,13 +112,12 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
 ###############################################################################
 
 source(here("scripts", "utils.R"))
-source(here("scripts", "config.R"))
 
-###############################################################################
+config <- yaml::read_yaml(here("conf", "config.yaml"))
 
 main(
-  repo_details_file = config[["repo_details_file"]],
-  results_dir = config[["pkg_results_dir"]],
+  repo_details_file = here(config[["repo_details_file"]]),
+  results_dir = here(config[["pkg_results_dir"]]),
   min_block_sizes = config[["min_block_sizes"]]
 )
 

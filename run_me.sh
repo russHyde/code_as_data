@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Config file
+
+config_file="conf/config.yaml"
+
 # Ensure the environment is activated
 
 if [[ $(basename "${CONDA_PREFIX}") != "code_as_data" ]]; then
@@ -10,8 +14,9 @@ fi
 
 # Ensure the results directories are set up
 
-for dir in "results" "results/packages"; do
-  if [[ ! -d "${dir}" ]]; then mkdir "${dir}"; fi
+for key in "results_dir" "pkg_results_dir"; do
+  dir="$(cat "${config_file}" | shyaml get-value "${key}")"
+  if [[ ! -d ${dir} ]]; then mkdir ${dir}; fi
 done
 
 # Install any non-conda R-dependencies
