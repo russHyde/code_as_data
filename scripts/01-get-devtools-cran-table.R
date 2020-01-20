@@ -1,13 +1,38 @@
 ###############################################################################
 
-pkgs <- c(
-  "here", "dplyr", "janitor", "tibble", "magrittr", "readr", "xml2", "yaml"
-)
+# pkgs required for running the script
+general_pkgs <- c("here", "magrittr", "optparse", "yaml")
+pkgs <- c(general_pkgs, "dplyr", "janitor", "tibble", "readr", "xml2")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
     library(pkg, character.only = TRUE)
   )
+}
+
+###############################################################################
+
+define_parser <- function() {
+  description <- paste(
+    "Obtain a subset of the CRAN package table that has been restricted to",
+    "only those packages mentioned in the package-development CRAN view",
+    "hosted by rOpenSci."
+  )
+
+  parser <- OptionParser(
+    description = description
+  ) %>%
+    add_option(
+      c("--config"), type = "character",
+      help = paste(
+        "A .yaml file containing the configuration details for the workflow.",
+        "The .yaml should contain fields for the keys",
+        "'task_view_url' (URL for the CRAN task-view .ctv file);",
+        "'cran_details_file' (the output of this script);",
+        "and 'drop' (which packages that are in both CRAN and the task-view",
+        "should be disregarded?)."
+      )
+    )
 }
 
 ###############################################################################
@@ -95,7 +120,8 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
 
 ###############################################################################
 
-config <- yaml::read_yaml(here("conf", "config.yaml"))
+opt <- optparse::parse_args(define_parser())
+config <- yaml::read_yaml(opt$config)
 
 main(
   task_view_url = config[["task_view_url"]],

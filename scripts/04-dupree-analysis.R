@@ -1,15 +1,38 @@
 ###############################################################################
 
-# pkgs require for running the script (not the packages that are analysed here)
-pkgs <- c(
-  "here", "bench", "dplyr", "dupree", "git2r", "magrittr", "readr", "tibble",
-  "yaml"
-)
+# pkgs required for running the script
+general_pkgs <- c("here", "magrittr", "optparse", "yaml")
+pkgs <- c(general_pkgs, "bench", "dplyr", "dupree", "git2r", "readr", "tibble")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
     library(pkg, character.only = TRUE)
   )
+}
+
+###############################################################################
+
+define_parser <- function() {
+  description <- paste(
+    "Runs `dupree::dupree_package` over each repo in a list of packages. The",
+    "repos should be available locally."
+  )
+
+  parser <- OptionParser(
+    description = description
+  ) %>%
+    add_option(
+      c("--config"), type = "character",
+      help = paste(
+        "A .yaml file containing the configuration details for the workflow.",
+        "The .yaml should contain fields for the keys:",
+        "- 'repo_details_file' (package,remote_repo,local_repo);",
+        "- 'pkg_results_dir' (the parent of the directory where",
+        "package-specific {dupree}-results should be placed);",
+        "- 'min_block_sizes' (an array of the different choices for this",
+        "dupree_package option)."
+      )
+    )
 }
 
 ###############################################################################
@@ -59,7 +82,9 @@ run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
   message("Running dupree workflow for: ", package)
 
   pkg_results_dir <- file.path(results_dir, package)
-  dir.create(pkg_results_dir)
+  if (! dir.exists(pkg_results_dir)) {
+    dir.create(pkg_results_dir)
+  }
 
   # -- obtain / save the duplicated code-block results
   #
@@ -87,6 +112,8 @@ run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
 
 main <- function(repo_details_file, results_dir, min_block_sizes) {
 
+  stopifnot(is.numeric(min_block_sizes))
+
   repo_details <- read_repo_details(repo_details_file)
 
   # For each repo,
@@ -102,7 +129,7 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
   for (i in seq_len(nrow(repo_details))) {
     run_workflow(
       repo_details$package[i],
-      repo_details$local_repo[i],
+      normalizePath(repo_details$local_repo[i]),
       results_dir,
       min_block_sizes
     )
@@ -113,7 +140,8 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
 
 source(here("scripts", "utils.R"))
 
-config <- yaml::read_yaml(here("conf", "config.yaml"))
+opt <- optparse::parse_args(define_parser())
+config <- yaml::read_yaml(opt$config)
 
 main(
   repo_details_file = here(config[["repo_details_file"]]),

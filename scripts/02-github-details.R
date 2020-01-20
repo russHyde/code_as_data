@@ -1,12 +1,36 @@
 ###############################################################################
 
-# pkgs require for running the script (not the packages that are analysed here)
-pkgs <- c("here", "dplyr", "magrittr", "readr", "stringr", "tibble", "yaml")
+# pkgs required for running the script
+general_pkgs <- c("here", "magrittr", "optparse", "yaml")
+pkgs <- c(general_pkgs, "dplyr", "readr", "stringr", "tibble")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
     library(pkg, character.only = TRUE)
   )
+}
+
+###############################################################################
+
+define_parser <- function() {
+  description <- paste(
+    "Obtain the github URL for all packages mentioned in a CRAN table and",
+    "details of where the repo will be stored locally."
+  )
+
+  parser <- OptionParser(
+    description = description
+  ) %>%
+    add_option(
+      c("--config"), type = "character",
+      help = paste(
+        "A .yaml file containing the configuration details for the workflow.",
+        "The .yaml should contain fields for the keys:",
+        "- 'cran_details_file' (a subset of the CRAN package table);",
+        "- 'repo_dir' (the repos will be downloaded in subdirs of this);",
+        "- and 'repo_details_file' (the output for this script)."
+      )
+    )
 }
 
 ###############################################################################
@@ -117,7 +141,8 @@ main <- function(cran_details_file, repo_dir, results_file) {
 
 ###############################################################################
 
-config <- yaml::read_yaml(here("conf", "config.yaml"))
+opt <- optparse::parse_args(define_parser())
+config <- yaml::read_yaml(opt$config)
 
 run_tests()
 

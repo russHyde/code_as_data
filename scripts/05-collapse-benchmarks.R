@@ -1,14 +1,37 @@
 ###############################################################################
 
 # pkgs require for running the script (not the packages that are analysed here)
-pkgs <- c(
-  "here", "bench", "dplyr", "magrittr", "purrr", "readr", "tibble", "yaml"
-)
+general_pkgs <- c("here", "magrittr", "optparse", "yaml")
+pkgs <- c(general_pkgs, "bench", "dplyr", "purrr", "readr", "tibble")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
     library(pkg, character.only = TRUE)
   )
+}
+
+###############################################################################
+
+define_parser <- function() {
+  description <- paste(
+    "Combine the results from multiple `bench::press` runs into a single",
+    "data.frame."
+  )
+
+  parser <- OptionParser(
+    description = description
+  ) %>%
+    add_option(
+      c("--config"), type = "character",
+      help = paste(
+        "A .yaml file containing the configuration details for the workflow.",
+        "The .yaml should contain fields for the keys:",
+        "- 'repo_details_file' (package,remote_repo,local_repo);",
+        "- 'pkg_results_dir' (the parent of the directory that contains",
+        "package-specific {dupree}-results that are to be combined);",
+        "- 'all_pkg_benchmarks_file' (the single output file for this script)"
+      )
+    )
 }
 
 ###############################################################################
@@ -39,7 +62,7 @@ collapse_benchmarks <- function(tables) {
 # --
 
 main <- function(
-    repo_details_file, results_dir, pkg_results_dir, output_file
+    repo_details_file, pkg_results_dir, output_file
 ) {
   repo_details <- read_repo_details(repo_details_file)
 
@@ -70,11 +93,11 @@ main <- function(
 
 source(here("scripts", "utils.R"))
 
-config <- yaml::read_yaml(here("conf", "config.yaml"))
+opt <- optparse::parse_args(define_parser())
+config <- yaml::read_yaml(opt$config)
 
 main(
   repo_details_file = here(config[["repo_details_file"]]),
-  results_dir = here(config[["results_dir"]]),
   pkg_results_dir = here(config[["pkg_results_dir"]]),
   output_file = here(config[["all_pkg_benchmarks_file"]])
 )

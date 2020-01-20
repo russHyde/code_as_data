@@ -117,6 +117,7 @@ dependencies:
   - r-forge=0.2.0
   - r-fs=1.3.1
   - r-generics=0.0.2
+  - r-getopt=1.20.3
   - r-ggplot2=3.2.1
   - r-gh=1.0.1
   - r-git2r=0.26.1
@@ -154,6 +155,7 @@ dependencies:
   - r-nlme=3.1_141
   - r-odbc=1.2.1
   - r-openssl=1.4.1
+  - r-optparse=1.6.4
   - r-packrat=0.5.0
   - r-pillar=1.4.2
   - r-pkgbuild=1.0.6
