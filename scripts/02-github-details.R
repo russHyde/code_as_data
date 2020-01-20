@@ -148,9 +148,7 @@ run_tests()
 
 main(
   cran_details_file = here(config[["cran_details_file"]]),
-  # TODO: use here() and make it the users' responsibility to link from ./data
-  # to an appropriate storage directory
-  repo_dir = config[["repo_dir"]],
+  repo_dir = here(config[["repo_dir"]]),
   results_file = here(config[["repo_details_file"]])
 )
 
