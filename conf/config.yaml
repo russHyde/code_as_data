@@ -40,7 +40,10 @@ task_view_url: https://raw.githubusercontent.com/ropensci/PackageDevelopment/mas
 # {R.oo} - The ./R/ directory of {R.oo} contains a filename with a comman in it
 # "020.makeObjectFinalizer,private.R". This causes {cloc}::cloc_by_file to fail
 # (because the cloc-results are read in as .csv format)
-drop: ["logging", "R.oo"]
+#
+# {rscala} - The R package was not at the top-level of the repo (sim to
+# {logging}) but had an R/ directory at the top-level, so {dupree} did not fail
+drop: ["logging", "R.oo", "rscala"]
 
 # Which packages must be installed from github for the analyses to be able to
 # run? ["gh_username/repo_name", ...]
