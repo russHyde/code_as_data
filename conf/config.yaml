@@ -4,14 +4,16 @@
 
 # -- Directories and filepaths
 
+# Paths should be specified relative to the repository root
+
 # Store results summaries here
-results_dir: results
+results_dir: "results"
 
 # Store results for individual packages in subdirs of this:
-pkg_results_dir: results/packages
+pkg_results_dir: "results/packages"
 
 # Save the raw repositories in subdirs of this:
-repo_dir: ~/temp/dev-tools-analysis
+repo_dir: "data/packages"
 
 # -- -- results files
 

@@ -14,9 +14,9 @@ fi
 
 # Ensure the results directories are set up
 
-for key in "results_dir" "pkg_results_dir"; do
+for key in "results_dir" "pkg_results_dir" "repo_dir"; do
   dir="$(cat "${config_file}" | shyaml get-value "${key}")"
-  if [[ ! -d ${dir} ]]; then mkdir ${dir}; fi
+  if [[ ! -d ${dir} ]]; then mkdir -p ${dir}; fi
 done
 
 # Install any non-conda R-dependencies
