@@ -46,10 +46,21 @@ task_view_url: https://raw.githubusercontent.com/ropensci/PackageDevelopment/mas
 drop: ["logging", "R.oo", "rscala"]
 
 # Which packages must be installed from github for the analyses to be able to
-# run? ["gh_username/repo_name", ...]
+# run?
 # - any dependencies of these packages should already be installed to the conda
 # environment
-remotes: ["hrbrmstr/cloc", "lorenzwalthert/gitsum"]
+# - we are using the dev version of {dupree} in case any improvements to that
+# package are discovered during development of this project
+remotes:
+  - cloc:
+    repo: "hrbrmstr/cloc"
+    commit: "f1bcd53"
+  - gitsum:
+    repo: "lorenzwalthert/gitsum"
+    commit: "bd98c22"
+  - dupree:
+    repo: "russHyde/dupree"
+    commit: "3138100"
 
 # ===================== #
 
