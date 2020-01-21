@@ -25,8 +25,10 @@ define_parser <- function() {
       c("--config"), type = "character",
       help = paste(
         "A .yaml file containing the configuration details for the workflow.",
-        "Any 'userName/repo' repository in it's `remotes` field will be",
-        "installed."
+        "Any repos in the `remotes` field will be installed.",
+        "Each entry of the `remotes` field should have a `repo` and an",
+        "optional `commit` entry (if no commit, current master will be used).",
+        "`repo` should be of the form 'userName/repoName'."
       )
     )
 }
@@ -35,7 +37,15 @@ define_parser <- function() {
 
 main <- function(remotes) {
   for (package in remotes) {
-    devtools::install_github(package, dependencies = FALSE)
+    repo_stub <- package[["repo"]]
+    commit <- if ("commit" %in% names(package)) {
+      package[["commit"]]
+    } else {
+      "master"
+    }
+    devtools::install_github(
+      repo = repo_stub, dependencies = FALSE, ref = commit
+    )
   }
 }
 
