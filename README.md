@@ -21,6 +21,13 @@ Bioconductor. These are installed by the script `scripts/00-setup-env.R`.
 See the 'remotes' entry in the config for details of the packages that are
 installed in this way.
 
+Install any remaining dependencies, and make any non-version-controlled
+directories (data, results etc)
+
+```
+./setup.sh
+```
+
 ----
 
 To run the analysis:
@@ -35,8 +42,8 @@ Then use the bash script to run the workflow (this will make any results / data
 directories that are missing and install any non-conda dependencies).
 
 ```
-./run_me.sh
+./run.sh
 ```
 
 If you want the data or results to be stored to a specific location, set up
-links to these positions before running `run_me.sh`.
+links to these positions before running `run.sh`.
