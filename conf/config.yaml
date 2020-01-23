@@ -61,6 +61,9 @@ remotes:
   - dupree:
     repo: "russHyde/dupree"
     commit: "3138100"
+  - lintr:
+    repo: "jimHester/lintr"
+    commit: "dbc7624"
 
 # ===================== #
 

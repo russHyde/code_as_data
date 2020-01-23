@@ -235,7 +235,6 @@ https://conda.anaconda.org/conda-forge/noarch/r-usethis-1.5.1-r35h6115d3f_1.tar.
 https://conda.anaconda.org/conda-forge/noarch/r-crosstalk-1.0.0-r35h6115d3f_1002.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/r-dbplyr-1.4.2-r35h6115d3f_1.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/r-haven-2.2.0-r35hde08347_0.tar.bz2
-https://conda.anaconda.org/conda-forge/noarch/r-lintr-2.0.0-r35h6115d3f_0.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/r-readxl-1.3.1-r35h0357c0b_2.tar.bz2
 https://conda.anaconda.org/conda-forge/linux-64/r-tidyr-1.0.0-r35h0357c0b_0.tar.bz2
 https://conda.anaconda.org/conda-forge/noarch/r-dt-0.10-r35h6115d3f_0.tar.bz2
