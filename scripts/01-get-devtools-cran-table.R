@@ -26,11 +26,25 @@ define_parser <- function() {
       c("--config"), type = "character",
       help = paste(
         "A .yaml file containing the configuration details for the workflow.",
-        "The .yaml should contain fields for the keys",
-        "'task_view_url' (URL for the CRAN task-view .ctv file);",
-        "'cran_details_file' (the output of this script);",
-        "and 'drop' (which packages that are in both CRAN and the task-view",
+        "The .yaml should contain fields for the keys:",
+        "`drop` (which packages that are in both CRAN and the task-view",
         "should be disregarded?)."
+      )
+    ) %>%
+    add_option(
+      "--url", type = "character",
+      help = paste(
+        "A URL that defines a *.ctv file containing a CRAN task-view.",
+        "The CRAN-database entry for any package that is mentioned in this",
+        "task view will be included in the output file (unless that package)",
+        "is present in the `drop` entry of the config."
+      )
+    ) %>%
+    add_option(
+      c("--output", "-o"), type = "character",
+      help = paste(
+        "A .tsv for storing the subset of the CRAN database that relates to",
+        "the non-dropped packages present in the task-view .ctv file."
       )
     )
 }
@@ -124,8 +138,8 @@ opt <- optparse::parse_args(define_parser())
 config <- yaml::read_yaml(opt$config)
 
 main(
-  task_view_url = config[["task_view_url"]],
-  results_file = here(config[["cran_details_file"]]),
+  task_view_url = opt$url,
+  results_file = here(opt$output),
   drop_pkgs = config[["drop"]]
 )
 
