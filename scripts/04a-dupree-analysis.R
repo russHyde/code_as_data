@@ -22,22 +22,39 @@ define_parser <- function() {
     description = description
   ) %>%
     add_option(
-      c("--config"), type = "character",
+      "--config", type = "character",
       help = paste(
         "A .yaml file containing the configuration details for the workflow.",
         "The .yaml should contain fields for the keys:",
-        "- 'repo_details_file' (package,remote_repo,local_repo);",
-        "- 'pkg_results_dir' (the parent of the directory where",
-        "package-specific {dupree}-results should be placed);",
         "- 'min_block_sizes' (an array of the different choices for this",
         "dupree_package option)."
+      )
+    ) %>%
+    add_option(
+      "--local_repo", type = "character",
+      help = paste(
+        "The filepath for a local-copy of a github repo. dupree_package will",
+        "be ran on the package contained therein."
+      )
+    ) %>%
+    add_option(
+      "--package_name", type = "character",
+      help = paste(
+        "The name of the package that is under analysis."
+      )
+    ) %>%
+    add_option(
+      "--output_dir", type = "character",
+      help = paste(
+        "The directory into which the package-specific dupree-results should",
+        "be saved."
       )
     )
 }
 
 ###############################################################################
 
-run_benchmark_workflow <- function(local_repo, results_file, min_block_sizes) {
+run_benchmarks <- function(local_repo, min_block_sizes) {
   #  TODO: fix this error in the benchmark calls
   #   - it appears to be due to calling `write_tsv` on a benchmark tibble
   # --
@@ -58,7 +75,7 @@ run_benchmark_workflow <- function(local_repo, results_file, min_block_sizes) {
 
   # Time the running of dupree over a package and save the timings to an .RDS
   # file
-  results <- bench::press(
+  bench::press(
     min_block_size = min_block_sizes, {
       bench::mark(
         min_iterations = 5,
@@ -68,7 +85,6 @@ run_benchmark_workflow <- function(local_repo, results_file, min_block_sizes) {
       )
     }
   )
-  readr::write_rds(results, results_file)
 }
 
 run_dupree_workflow <- function(local_repo, results_file, min_block_size) {
@@ -78,17 +94,18 @@ run_dupree_workflow <- function(local_repo, results_file, min_block_size) {
 
 # --
 
-run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
-  message("Running dupree workflow for: ", package)
+run_workflow <- function(
+    local_repo, .package, pkg_results_dir, min_block_sizes
+) {
+  message("Running dupree workflow for: ", local_repo)
 
-  pkg_results_dir <- file.path(results_dir, package)
-  if (! dir.exists(pkg_results_dir)) {
-    dir.create(pkg_results_dir)
-  }
+  stopifnot(dir.exists(pkg_results_dir))
+  stopifnot(dir.exists(local_repo))
+  stopifnot(is.numeric(min_block_sizes))
 
   # -- obtain / save the duplicated code-block results
   #
-  # This fails if no top-level ./R/ directory is found
+  # This fails if no top-level R-package structure is found
   #
   for (bs in min_block_sizes) {
     results_file <- file.path(
@@ -104,19 +121,21 @@ run_workflow <- function(package, local_repo, results_dir, min_block_sizes) {
     pkg_results_dir, "dupree_timings.rds"
   )
   if (! file.exists(bench_results_file)) {
-    run_benchmark_workflow(local_repo, bench_results_file, min_block_sizes)
+    benchmarks <- run_benchmarks(
+      local_repo = local_repo,
+      min_block_sizes = min_block_sizes
+    ) %>%
+      tibble::add_column(package = .package, .before = 1)
+
+    readr::write_rds(benchmarks, bench_results_file)
   }
 }
 
 # --
 
-main <- function(repo_details_file, results_dir, min_block_sizes) {
+main <- function(local_repo, package, output_dir, min_block_sizes) {
 
-  stopifnot(is.numeric(min_block_sizes))
-
-  repo_details <- read_repo_details(repo_details_file)
-
-  # For each repo,
+  # For a given repo,
   # For each min_block_size in some set
   # - Run dupree
   # - Save the results table to a file
@@ -124,28 +143,23 @@ main <- function(repo_details_file, results_dir, min_block_sizes) {
   # - Measure the time it takes to run & save (package, min_block_size,
   # time_taken) to a file
   #     - <results_dir>/<package_name>/dupree_timings.tsv
-  # - Suggest saving the timings in bench::mark results format
+  # - Save the timings in bench::mark results format
 
-  for (i in seq_len(nrow(repo_details))) {
-    run_workflow(
-      repo_details$package[i],
-      normalizePath(repo_details$local_repo[i]),
-      results_dir,
-      min_block_sizes
-    )
-  }
+  run_workflow(
+    local_repo, package, output_dir, min_block_sizes
+  )
 }
 
 ###############################################################################
 
-source(here("scripts", "utils.R"))
-
 opt <- optparse::parse_args(define_parser())
+
 config <- yaml::read_yaml(opt$config)
 
 main(
-  repo_details_file = here(config[["repo_details_file"]]),
-  results_dir = here(config[["pkg_results_dir"]]),
+  local_repo = opt$local_repo,
+  package = opt$package_name,
+  output_dir = opt$output_dir,
   min_block_sizes = config[["min_block_sizes"]]
 )
 
