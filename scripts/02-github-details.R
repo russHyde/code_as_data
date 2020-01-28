@@ -1,8 +1,8 @@
 ###############################################################################
 
 # pkgs required for running the script
-general_pkgs <- c("here", "magrittr", "optparse", "yaml")
-pkgs <- c(general_pkgs, "dplyr", "readr", "stringr", "tibble")
+general_pkgs <- c("here", "magrittr", "optparse")
+pkgs <- c(general_pkgs, "readr", "stringr", "tibble")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -22,13 +22,26 @@ define_parser <- function() {
     description = description
   ) %>%
     add_option(
-      c("--config"), type = "character",
+      c("--input", "-i"), type = "character",
       help = paste(
-        "A .yaml file containing the configuration details for the workflow.",
-        "The .yaml should contain fields for the keys:",
-        "- 'cran_details_file' (a subset of the CRAN package table);",
-        "- 'repo_dir' (the repos will be downloaded in subdirs of this);",
-        "- and 'repo_details_file' (the output for this script)."
+        "A .tsv containing a subset of the CRAN database for those packages",
+        "that have github repositories. Should have `package`, `url` and",
+        "`bug_reports` columns."
+      )
+    ) %>%
+    add_option(
+      c("--repo_dir"), type = "character",
+      help = paste(
+        "A directory. Each repository will be downloaded into a subdirectory",
+        "of this filepath."
+      )
+    ) %>%
+    add_option(
+      c("--output", "-o"), type = "character",
+      help = paste(
+        "A .tsv file for outputting the package-name, remote-location and",
+        "planned local-location for the downloaded repository for each github",
+        "repository under study here."
       )
     )
 }
@@ -126,12 +139,15 @@ run_tests <- function() {
 ###############################################################################
 
 main <- function(cran_details_file, repo_dir, results_file) {
-  message("Running script ...")
   # Converts a CRAN table that only contains github-hosted packages into a
   # table containing  (package-name, remote-repo, local-repo) paths.
 
   dev_pkg_table <- readr::read_tsv(
     cran_details_file, col_types = cols(.default = "c")
+  )
+
+  stopifnot(
+    all(c("package", "url", "bug_reports") %in% colnames(dev_pkg_table))
   )
 
   repo_details <- define_repositories(dev_pkg_table, repo_dir)
@@ -142,14 +158,13 @@ main <- function(cran_details_file, repo_dir, results_file) {
 ###############################################################################
 
 opt <- optparse::parse_args(define_parser())
-config <- yaml::read_yaml(opt$config)
 
 run_tests()
 
 main(
-  cran_details_file = here(config[["cran_details_file"]]),
-  repo_dir = here(config[["repo_dir"]]),
-  results_file = here(config[["repo_details_file"]])
+  cran_details_file = here(opt$input),
+  repo_dir = here(opt$repo_dir),
+  results_file = here(opt$output)
 )
 
 ###############################################################################
