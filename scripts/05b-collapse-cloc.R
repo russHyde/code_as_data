@@ -19,9 +19,8 @@ for (pkg in pkgs) {
 
 define_parser <- function() {
   description <- paste(
-    "Count the number of lines of code for each R-source file in a repository.",
-    "This only considers files that are in the ./R/ subdirectory of an R",
-    "package structure."
+    "Combine the results from cloc analysis of individual packages into a",
+    "single file."
   )
 
   parser <- OptionParser(
@@ -32,41 +31,42 @@ define_parser <- function() {
       help = paste(
         "A .yaml file containing the configuration details for the workflow.",
         "The .yaml should contain fields for the keys:",
-        "- 'repo_details_file' (package,remote_repo,local_repo);",
-        "- 'all_pkg_cloc_file' (the single output file for this script)"
+        "- 'repo_details_file' (package,remote_repo,local_repo).",
+        "- 'pkg_results_dir' (the parent directory for the package-specific",
+        "analyses)"
+      )
+    ) %>%
+    add_option(
+      c("--output", "-o"), type = "character",
+      help = paste(
+        "The output .tsv file. This will contain the line-counts across all",
+        "packages."
       )
     )
 }
 
 ###############################################################################
 
-get_cloc_details <- function(repo_details) {
-  # We only analyse the contents of the ./R/ directory in the repo
-  Map(
-    function(pkg, path) {
-      cloc::cloc_by_file(file.path(path, "R"))
-    },
-    repo_details[["package"]],
-    repo_details[["local_repo"]]
-  ) %>%
-    dplyr::bind_rows(.id = "package")
+define_cloc_files <- function(packages, parent_dir) {
+  file.path(parent_dir, packages, "cloc_by_file.tsv")
 }
 
-format_cloc <- function(df) {
-  df %>%
-    dplyr::filter(language == "R")
+import_cloc_files <- function(files) {
+  files %>%
+    purrr::map_df(readr::read_tsv, col_types = readr::cols())
 }
 
 ###############################################################################
 
-main <- function(repo_details_file, results_file) {
+main <- function(repo_details_file, pkg_results_dir, results_file) {
   repo_details <- read_repo_details(repo_details_file)
+  packages <- repo_details[["package"]]
 
-  cloc_results <- repo_details %>%
-    get_cloc_details() %>%
-    format_cloc()
+  cloc_files <- define_cloc_files(packages, pkg_results_dir)
 
-  readr::write_tsv(cloc_results, results_file)
+  cloc_data <- import_cloc_files(cloc_files)
+
+  readr::write_tsv(cloc_data, results_file)
 }
 
 ###############################################################################
@@ -82,7 +82,8 @@ config <- yaml::read_yaml(opt$config)
 
 main(
   repo_details_file = here(config[["repo_details_file"]]),
-  results_file = here(config[["all_pkg_cloc_file"]])
+  pkg_results_dir = here(config[["pkg_results_dir"]]),
+  results_file = here(opt$output)
 )
 
 # ggplot(cloc, aes(x = reorder(package, loc), y = log2(loc))) + geom_col()
