@@ -1,8 +1,8 @@
 ###############################################################################
 
-# pkgs require for running the script (not the packages that are analysed here)
+# pkgs require for running the script
 general_pkgs <- c("here", "magrittr", "optparse", "yaml")
-pkgs <-  c(general_pkgs, "dplyr", "gitsum", "readr", "stringr", "tidyr")
+pkgs <-  c(general_pkgs, "readr", "purrr")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -14,8 +14,7 @@ for (pkg in pkgs) {
 
 define_parser <- function() {
   description <- paste(
-    "Obtain the file-changes from the git-history for a set of repositories.",
-    "The repositories should be stored locally."
+    "Merge the git-history results for a set of repositories."
   )
 
   parser <- OptionParser(
@@ -27,42 +26,42 @@ define_parser <- function() {
         "A .yaml file containing the configuration details for the workflow.",
         "The .yaml should contain fields for the keys:",
         "- 'repo_details_file' (package,remote_repo,local_repo);",
-        "- 'all_pkg_gitsum_file' (the single output file for this script)"
+        "- 'pkg_results_dir' (the parent directory for the package-specific",
+        "analyses)."
+      )
+    ) %>%
+    add_option(
+      c("--output", "-o"), type = "character",
+      help = paste(
+        "The output .tsv file. This will contain the gitsum values across all",
+        "repos studied here."
       )
     )
 }
 
 ###############################################################################
 
-get_gitsum_results <- function(repo_details) {
-   Map(
-    function(pkg, path) {
-      gitsum::init_gitsum(path, over_write = TRUE)
-
-      gitsum::parse_log_detailed(path) %>%
-        gitsum::unnest_log() %>%
-        gitsum::set_changed_file_to_latest_name() %>%
-        dplyr::filter(stringr::str_starts(changed_file, "R/"))
-    },
-    repo_details[["package"]],
-    repo_details[["local_repo"]]
-  )
+define_gitsum_files <- function(packages, parent_dir) {
+  file.path(parent_dir, packages, "gitsum.tsv")
 }
 
-format_gitsum <- function(list_of_dfs) {
-  dplyr::bind_rows(list_of_dfs, .id = "package")
+import_gitsum_files <- function(files) {
+  files %>%
+    purrr::map_df(readr::read_tsv, col_types = readr::cols())
 }
 
 ###############################################################################
 
-main <- function(repo_details_file, results_file) {
+main <- function(repo_details_file, pkg_results_dir, results_file) {
+
   repo_details <- read_repo_details(repo_details_file)
+  packages <- repo_details[["package"]]
 
-  gitsum_results <- repo_details %>%
-    get_gitsum_results() %>%
-    format_gitsum()
+  gitsum_files <- define_gitsum_files(packages, pkg_results_dir)
 
-  readr::write_tsv(gitsum_results, results_file)
+  gitsum_data <- import_gitsum_files(gitsum_files)
+
+  readr::write_tsv(gitsum_data, results_file)
 }
 
 ###############################################################################
@@ -78,7 +77,8 @@ config <- yaml::read_yaml(opt$config)
 
 main(
   repo_details_file = here(config[["repo_details_file"]]),
-  results_file = here(config[["all_pkg_gitsum_file"]])
+  pkg_results_dir = here(config[["pkg_results_dir"]]),
+  results_file = here(opt$output)
 )
 
 ###############################################################################
