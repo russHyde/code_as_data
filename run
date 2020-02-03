@@ -72,8 +72,8 @@ cat "${repo_details}" | tail -n+2 | cut -f1 > "${pkg_names}"
 # Read each line from a header-stripped 3-column .tsv
 # For each row, store the entries in 'package', 'remote_repo' and 'local_repo'
 
-while IFS=$'\t' read package remote_repo local_repo
-do
+while IFS=$'\t' read package remote_repo local_repo; do
+
   if [[ ! -d "${pkg_results_dir}/${package}" ]]; then
     mkdir "${pkg_results_dir}/${package}"
   fi

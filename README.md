@@ -25,7 +25,7 @@ Install any remaining dependencies, and make any non-version-controlled
 directories (data, results etc)
 
 ```
-./setup.sh
+./setup
 ```
 
 ----
@@ -38,12 +38,11 @@ First activate the conda environment (if you haven't already)
 conda activate code_as_data
 ```
 
-Then use the bash script to run the workflow (this will make any results / data
-directories that are missing and install any non-conda dependencies).
+Then use the bash script to run the workflow
 
 ```
-./run.sh
+./run
 ```
 
 If you want the data or results to be stored to a specific location, set up
-links to these positions before running `run.sh`.
+links to these positions before running `./run`.
