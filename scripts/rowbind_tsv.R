@@ -14,17 +14,21 @@ for (pkg in pkgs) {
 
 define_parser <- function() {
   description <- paste(
-    "Collapse a set of homogeneous-structured .tsv files into a single .tsv."
+    "Collapse a set of homogeneous-structured .tsv files into a single .tsv.",
+    "The files to collapse can either be specified in a file (--input_files)",
+    "or as the trailing arguments to this script."
   )
 
   parser <- OptionParser(
+    usage = "usage: Rscript %prog [options] (file1 file2 file3 ...)",
     description = description
   ) %>%
     add_option(
       c("--input_files"), type = "character",
       help = paste(
-        "A single file, containing the filepaths for all files that should be",
-        "collapsed together by this script."
+        "An (optional) single file, containing the filepaths for all files",
+        "that should be collapsed together by this script. If missing there",
+        "must be at least one filename trailing the command-line options."
       )
     ) %>%
     add_option(
@@ -37,9 +41,29 @@ define_parser <- function() {
 
 ###############################################################################
 
-define_files <- function(input_pattern, packages, parent_dir) {
-  file.path(parent_dir, packages, input_pattern)
+define_collapsible_files <- function(opt) {
+  # Script can be called:
+  # 1) Rscript <script> --input_files <file1> --output <file2>
+  # OR
+  # Rscript <script> --output <file> [trailing_file_names]
+  # For 1) file1 defines the filepaths for those files that are to be collapsed
+  # For 2) the unnamed files in trailing position are to be collapsed
+
+  options <- opt$options
+  trailing <- opt$args
+
+  raw_files <- if (!is.null(options[["input_files"]])) {
+    # the files to collapse are all defined inside a single file
+    scan(here::here(options[["input_files"]]), what = "character")
+  } else {
+    # all files in the unnamed, trailing arguments are to be collapsed
+    trailing
+  }
+
+  here::here(raw_files)
 }
+
+###############################################################################
 
 import_and_collapse <- function(files) {
   stopifnot(length(files) > 0)
@@ -51,13 +75,13 @@ import_and_collapse <- function(files) {
 ###############################################################################
 
 main <- function(
-    input_files, results_file
+    opt
 ) {
-  # `input_files` is a file that _contains_ a set of filenames, it is the set
-  # of filenames that are to be collapsed here.
-  files <- here::here(scan(input_files, what = "character"))
+  results_file <- here::here(opt$options$output)
 
-  collapsed_data <- import_and_collapse(files)
+  collapsible_files <- define_collapsible_files(opt)
+
+  collapsed_data <- import_and_collapse(collapsible_files)
 
   readr::write_tsv(collapsed_data, results_file)
 }
@@ -68,11 +92,8 @@ main <- function(
 
 ###############################################################################
 
-opt <- optparse::parse_args(define_parser())
-
 main(
-  input_files = here(opt$input_files),
-  results_file = here(opt$output)
+  opt = optparse::parse_args(define_parser(), positional_arguments = TRUE)
 )
 
 ###############################################################################

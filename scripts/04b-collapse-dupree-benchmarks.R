@@ -15,17 +15,21 @@ for (pkg in pkgs) {
 define_parser <- function() {
   description <- paste(
     "Combine the results from multiple `bench::press` runs into a single",
-    "data.frame."
+    "data.frame.",
+    "The files to collapse can either be specified in a file (--input_files)",
+    "or as the trailing arguments to this script."
   )
 
   parser <- OptionParser(
+    usage = "usage: Rscript %prog [options] (file1 file2 file3 ...)",
     description = description
   ) %>%
     add_option(
       "--input_files", type = "character",
       help = paste(
-        "The set of input files. The file-paths to the data that should be",
-        "combined should all be defined in a single one-column file.",
+        "(optional) The set of input files. The file-paths to the data that",
+        "should be combined should all be defined in a single one-column",
+        "file.",
         "Each file should be an .rds with data produced by bench::press and",
         "much contain a `package` column."
       )
@@ -37,6 +41,30 @@ define_parser <- function() {
         "for all the analysed packages."
       )
     )
+}
+
+###############################################################################
+
+define_collapsible_files <- function(opt) {
+  # Script can be called:
+  # 1) Rscript <script> --input_files <file1> --output <file2>
+  # OR
+  # Rscript <script> --output <file> [trailing_file_names]
+  # For 1) file1 defines the filepaths for those files that are to be collapsed
+  # For 2) the unnamed files in trailing position are to be collapsed
+
+  options <- opt$options
+  trailing <- opt$args
+
+  raw_files <- if (!is.null(options[["input_files"]])) {
+    # the files to collapse are all defined inside a single file
+    scan(here::here(options[["input_files"]]), what = "character")
+  } else {
+    # all files in the unnamed, trailing arguments are to be collapsed
+    trailing
+  }
+
+  here::here(raw_files)
 }
 
 ###############################################################################
@@ -61,16 +89,17 @@ import_benchmarks <- function(path) {
 # --
 
 main <- function(
-    input_files, output_file
+    opt
 ) {
-  # For each repo, there is a .rds file containing bench::press results
-  #
+  # For each repo, there is a .rds file containing bench::press results.
   # Combine these results into a single table
 
-  # Obtain the paths to the dupree-timings .rds files
-  pkg_timings_paths <- here::here(scan(input_files, what = "character"))
+  results_file <- here::here(opt$options$output)
 
-  bench_results <- Map(import_benchmarks, pkg_timings_paths)
+  # Obtain the paths to the dupree-timings .rds files
+  collapsible_files <- define_collapsible_files(opt)
+
+  bench_results <- Map(import_benchmarks, collapsible_files)
 
   # Combine the benchmark data for each package into a single table
   # - we suppress the `Vectorizing 'bench_time' ...` warnings
@@ -78,16 +107,13 @@ main <- function(
     dplyr::bind_rows(bench_results)
   )
 
-  readr::write_tsv(summarised_results, output_file)
+  readr::write_tsv(summarised_results, results_file)
 }
 
 ###############################################################################
 
-opt <- optparse::parse_args(define_parser())
-
 main(
-  input_files = here(opt$input_files),
-  output_file = here(opt$output)
+  opt = optparse::parse_args(define_parser(), positional_arguments = TRUE)
 )
 
 #
