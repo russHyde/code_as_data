@@ -19,9 +19,11 @@ repo_dir: "data/packages"
 
 repo_details_file:        "results/dev-pkg-repositories.tsv"
 cran_details_file:        "results/dev-pkg-table.tsv"
-all_pkg_benchmarks_file:  "results/dev-pkg-benchmarks.tsv"
-all_pkg_cloc_file:        "results/dev-pkg-cloc.tsv"
-all_pkg_gitsum_file:      "results/dev-pkg-gitsum.tsv"
+
+pooled_results:
+  dupree_benchmarks: "results/dev-pkg-benchmarks.tsv"
+  cloc:              "results/dev-pkg-cloc.tsv"
+  gitsum:            "results/dev-pkg-gitsum.tsv"
 
 # ===================== #
 
