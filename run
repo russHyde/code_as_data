@@ -36,9 +36,9 @@ task_view_url="$(yaml_value "${config_file}" "task_view_url")"
 # Files constructed by the called scripts
 cran_table="$(yaml_value "${config_file}" "cran_details_file")"
 repo_details="$(yaml_value "${config_file}" "repo_details_file")"
-dupree_benchmarks="$(yaml_value "${config_file}" "all_pkg_benchmarks_file")"
-cloc_table="$(yaml_value "${config_file}" "all_pkg_cloc_file")"
-gitsum_table="$(yaml_value "${config_file}" "all_pkg_gitsum_file")"
+dupree_benchmarks="$(yaml_value "${config_file}" "pooled_results.dupree_benchmarks")"
+cloc_table="$(yaml_value "${config_file}" "pooled_results.cloc")"
+gitsum_table="$(yaml_value "${config_file}" "pooled_results.gitsum")"
 
 # Parent directories for package-specific:
 # - local-storage of the github repos
