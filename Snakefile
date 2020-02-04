@@ -18,16 +18,38 @@ def get_github_url(wildcards):
 
 ###############################################################################
 
-package_specific_gitsum_files = expand(
-    join(config["pkg_results_dir"], "{package}", "gitsum.tsv"),
-    package=packages
-)
+# Define the filenames for all package-specific analysis results
+# For a given package, these are typically of the form
+# `<results_dir>/packages/<current_pkg>/<filename>`
+# for filename:
+#   gitsum.tsv, cloc_by_file.tsv, dupree_timings.rds, dupree_table.b40.tsv,
+#   dupree_table.b100.tsv
+
+package_specific_files = {}
+
+package_specific_suffixes = {
+    "gitsum": "gitsum.tsv",
+    "cloc": "cloc_by_file.tsv",
+    "dupree_timings": "dupree_timings.rds",
+    "dupree_results": expand(
+        "dupree_table.b{block_size}.tsv",
+        block_size = config["min_block_sizes"]
+    )
+}
+
+for k, v in package_specific_suffixes.items():
+    package_specific_files[k] = expand(
+        join(config["pkg_results_dir"], "{package}", "{suffix}"),
+        package=packages,
+        suffix=v
+    )
 
 ###############################################################################
 
 rule all:
     input:
-        config["all_pkg_gitsum_file"]
+        config["all_pkg_gitsum_file"],
+        config["all_pkg_cloc_file"]
 
 ###############################################################################
 
@@ -43,10 +65,25 @@ rule collapse_gitsum:
         --- Combine the gitsum results for each repository under study
         """
     input:
-        data = package_specific_gitsum_files,
+        data = package_specific_files["gitsum"],
         script = join("scripts", "rowbind_tsv.R")
     output:
         config["all_pkg_gitsum_file"]
+    shell:
+        """
+        Rscript {input.script} --output {output} {input.data}
+        """
+
+rule collapse_cloc:
+    message:
+        """
+        --- Combine the cloc results for each repository under study
+        """
+    input:
+        data = package_specific_files["cloc"],
+        script = join("scripts", "rowbind_tsv.R")
+    output:
+        config["all_pkg_cloc_file"]
     shell:
         """
         Rscript {input.script} --output {output} {input.data}
@@ -65,7 +102,29 @@ rule single_repo_gitsum:
         repo = join(config["repo_dir"], "{package}"),
         script = join("scripts", "06-gitsum-analysis.R")
     output:
-        join(config["pkg_results_dir"], "{package}", "gitsum.tsv")
+        join(
+            config["pkg_results_dir"], "{package}", package_specific_suffixes["gitsum"]
+        )
+    shell:
+        """
+        Rscript {input.script} \
+            --local_repo {input.repo} \
+            --package_name {wildcards.package} \
+            --output {output}
+        """
+
+rule single_repo_cloc:
+    message:
+        """
+        --- Analyse the lines-of-code for each file in a single repository
+        """
+    input:
+        repo = join(config["repo_dir"], "{package}"),
+        script = join("scripts", "05-cloc-analysis.R")
+    output:
+        join(
+            config["pkg_results_dir"], "{package}", package_specific_suffixes["cloc"]
+        )
     shell:
         """
         Rscript {input.script} \
