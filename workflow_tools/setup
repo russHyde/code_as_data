@@ -1,5 +1,52 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+###############################################################################
+
+# Helper functions
+
+yaml_value() {
+  # args: yaml-file, fieldname
+  # extracts the field from the yaml file
+  cat "${1}" | shyaml get-value "${2}"
+}
+
+###############################################################################
+
+# configs
+config="conf/config.yaml"
+prereqs="conf/prereqs.yaml"
+
+if [[ ! -f "${config}" ]]; then
+  echo "local config: ${config} should exist" >&2
+  exit 1
+fi
+
+if [[ ! -f "${prereqs}" ]]; then
+  echo "global config: ${prereqs} should exist" >&2
+  exit 1
+fi
+
+###############################################################################
+
+# Choose repositories for analysis by all workflow tools
+
+# -- It is assumed that the user has ran the main workflow, so that a
+# dev-pkgs-repositories.tsv file is available
+
+global_repo_file="$(yaml_value "${prereqs}" "repo_details_file")"
+local_repo_file="$(yaml_value "${config}" "repo_details_file")"
+
+if [[ ! -f "${global_repo_file}" ]]; then
+  echo "Repo details should have been prepared by the main workflow first" >&2
+  exit 1
+fi
+
+head -n11 "${global_repo_file}" > "${local_repo_file}"
+
+###############################################################################
+
 echo "Not yet implemented" >&2
 exit 1
+
+###############################################################################
