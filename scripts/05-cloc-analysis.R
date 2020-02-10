@@ -85,7 +85,7 @@ main <- function(local_repo, package, results_file) {
 opt <- optparse::parse_args(define_parser())
 
 main(
-  local_repo = opt$local_repo,
+  local_repo = here(opt$local_repo),
   package = opt$package_name,
   results_file = here(opt$output)
 )

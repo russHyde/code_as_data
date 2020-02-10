@@ -55,7 +55,7 @@ opt <- optparse::parse_args(define_parser())
 
 main(
   remote_repo = opt$remote_repo,
-  local_repo = opt$local_repo
+  local_repo = here(opt$local_repo)
 )
 
 ###############################################################################

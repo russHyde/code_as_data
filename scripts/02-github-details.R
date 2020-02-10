@@ -168,7 +168,7 @@ if (opt$test) {
 } else {
   main(
     cran_details_file = here(opt$input),
-    repo_dir = here(opt$repo_dir),
+    repo_dir = opt$repo_dir,
     results_file = here(opt$output)
   )
 }
