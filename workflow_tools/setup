@@ -42,7 +42,14 @@ if [[ ! -f "${global_repo_file}" ]]; then
   exit 1
 fi
 
-head -n11 "${global_repo_file}" > "${local_repo_file}"
+# update the set of repositories for analysis if the total-set of repositories
+# (in the parent project) are updated
+
+if [[ ! -f "${local_repo_file}" ]] || \
+    [[ "${local_repo_file}" -ot "${global_repo_file}" ]]; then
+  echo "Taking the first 10 repos for use in workflow-comparison subjob" >&2
+  head -n11 "${global_repo_file}" > "${local_repo_file}"
+fi
 
 ###############################################################################
 
