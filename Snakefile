@@ -73,7 +73,7 @@ rule collapse_gitsum:
         """
     input:
         data = package_specific_files["gitsum"],
-        script = join("scripts", "rowbind_tsv.R")
+        script = join("scripts", "rowbind-tsv.R")
     output:
         config["pooled_results"]["gitsum"]
     shell:
@@ -88,7 +88,7 @@ rule collapse_cloc:
         """
     input:
         data = package_specific_files["cloc"],
-        script = join("scripts", "rowbind_tsv.R")
+        script = join("scripts", "rowbind-tsv.R")
     output:
         config["pooled_results"]["cloc"]
     shell:
