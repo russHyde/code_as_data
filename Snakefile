@@ -8,7 +8,7 @@ my_config = join("conf", "config.yaml")
 configfile: my_config
 
 repositories = pd.read_table(
-    join(config["results_dir"], "dev-pkg-repositories.tsv")
+    config["repo_details_file"]
 ).set_index("package", drop=False)
 
 packages=repositories["package"].tolist()
