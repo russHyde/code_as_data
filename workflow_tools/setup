@@ -13,6 +13,15 @@ yaml_value() {
 
 ###############################################################################
 
+# Ensure the environment is activated
+
+if [[ $(basename "${CONDA_PREFIX}") != "code_as_data" ]]; then
+  echo "Retry with CONDA env 'code_as_data'" >&2
+  exit 1
+fi
+
+###############################################################################
+
 # configs
 config="conf/config.yaml"
 prereqs="conf/prereqs.yaml"
@@ -50,10 +59,5 @@ if [[ ! -f "${local_repo_file}" ]] || \
   echo "Taking the first 10 repos for use in workflow-comparison subjob" >&2
   head -n11 "${global_repo_file}" > "${local_repo_file}"
 fi
-
-###############################################################################
-
-echo "Not yet implemented" >&2
-exit 1
 
 ###############################################################################
