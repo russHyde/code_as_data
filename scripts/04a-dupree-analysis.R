@@ -157,7 +157,7 @@ opt <- optparse::parse_args(define_parser())
 config <- yaml::read_yaml(opt$config)
 
 main(
-  local_repo = opt$local_repo,
+  local_repo = here(opt$local_repo),
   package = opt$package_name,
   output_dir = opt$output_dir,
   min_block_sizes = config[["min_block_sizes"]]

@@ -43,6 +43,10 @@ define_parser <- function() {
         "planned local-location for the downloaded repository for each github",
         "repository under study here."
       )
+    ) %>%
+    add_option(
+      "--test", action = "store_true", default = FALSE,
+      help = "Run any script-embedded tests then exit."
     )
 }
 
@@ -159,12 +163,14 @@ main <- function(cran_details_file, repo_dir, results_file) {
 
 opt <- optparse::parse_args(define_parser())
 
-run_tests()
-
-main(
-  cran_details_file = here(opt$input),
-  repo_dir = here(opt$repo_dir),
-  results_file = here(opt$output)
-)
+if (opt$test) {
+  run_tests()
+} else {
+  main(
+    cran_details_file = here(opt$input),
+    repo_dir = opt$repo_dir,
+    results_file = here(opt$output)
+  )
+}
 
 ###############################################################################

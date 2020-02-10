@@ -8,7 +8,7 @@ my_config = join("conf", "config.yaml")
 configfile: my_config
 
 repositories = pd.read_table(
-    join(config["results_dir"], "dev-pkg-repositories.tsv")
+    config["repo_details_file"]
 ).set_index("package", drop=False)
 
 packages=repositories["package"].tolist()
@@ -73,7 +73,7 @@ rule collapse_gitsum:
         """
     input:
         data = package_specific_files["gitsum"],
-        script = join("scripts", "rowbind_tsv.R")
+        script = join("scripts", "rowbind-tsv.R")
     output:
         config["pooled_results"]["gitsum"]
     shell:
@@ -88,7 +88,7 @@ rule collapse_cloc:
         """
     input:
         data = package_specific_files["cloc"],
-        script = join("scripts", "rowbind_tsv.R")
+        script = join("scripts", "rowbind-tsv.R")
     output:
         config["pooled_results"]["cloc"]
     shell:
