@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+###############################################################################
+
+# Helper functions
+
+yaml_value() {
+  # args: yaml-file, fieldname
+  # extracts the field from the yaml file
+  cat "${1}" | shyaml get-value "${2}"
+}
+
+###############################################################################
+
+# Ensure the environment is activated
+
+if [[ $(basename "${CONDA_PREFIX}") != "code_as_data" ]]; then
+  echo "Retry with CONDA env 'code_as_data'" >&2
+  exit 1
+fi
+
+###############################################################################
+
+# configs
+config="conf/config.yaml"
+prereqs="conf/prereqs.yaml"
+
+if [[ ! -f "${config}" ]]; then
+  echo "local config: ${config} should exist" >&2
+  exit 1
+fi
+
+if [[ ! -f "${prereqs}" ]]; then
+  echo "global config: ${prereqs} should exist" >&2
+  exit 1
+fi
+
+###############################################################################
+
+# Choose repositories for analysis by all workflow tools
+
+# -- It is assumed that the user has ran the main workflow, so that a
+# dev-pkgs-repositories.tsv file is available
+
+global_repo_file="$(yaml_value "${prereqs}" "repo_details_file")"
+local_repo_file="$(yaml_value "${config}" "repo_details_file")"
+
+if [[ ! -f "${global_repo_file}" ]]; then
+  echo "Repo details should have been prepared by the main workflow first" >&2
+  exit 1
+fi
+
+# update the set of repositories for analysis if the total-set of repositories
+# (in the parent project) are updated
+
+if [[ ! -f "${local_repo_file}" ]] || \
+    [[ "${local_repo_file}" -ot "${global_repo_file}" ]]; then
+  echo "Taking the first 10 repos for use in workflow-comparison subjob" >&2
+  head -n11 "${global_repo_file}" > "${local_repo_file}"
+fi
+
+###############################################################################

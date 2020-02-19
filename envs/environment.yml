@@ -27,6 +27,7 @@ dependencies:
   - cffi=1.13.2
   - chardet=3.0.4
   - configargparse=0.13.0
+  - coreutils=8.31
   - cryptography=2.8
   - curl=7.65.3
   - cyrus-sasl=2.1.27
@@ -120,6 +121,7 @@ dependencies:
   - nbformat=5.0.4
   - ncurses=6.1
   - networkx=2.4
+  - nextflow=19.10.0
   - numpy=1.17.5
   - openjdk=8.0.192
   - openjpeg=2.3.1
@@ -158,6 +160,7 @@ dependencies:
   - r-backports=1.1.5
   - r-base=3.5.1
   - r-base64enc=0.1_3
+  - r-base64url=1.4
   - r-bench=1.0.4
   - r-bit=1.1_14
   - r-bit64=0.9_7
@@ -185,12 +188,14 @@ dependencies:
   - r-devtools=2.2.1
   - r-digest=0.6.23
   - r-dplyr=0.8.3
+  - r-drake=7.10.0
   - r-dt=0.10
   - r-ellipsis=0.3.0
   - r-evaluate=0.14
   - r-fansi=0.4.0
   - r-farver=2.0.1
   - r-fastmap=1.0.1
+  - r-filelock=1.0.2
   - r-forcats=0.4.0
   - r-forge=0.2.0
   - r-fs=1.3.1
@@ -209,6 +214,7 @@ dependencies:
   - r-htmlwidgets=1.5.1
   - r-httpuv=1.5.2
   - r-httr=1.4.1
+  - r-igraph=1.2.4.2
   - r-ini=0.3.1
   - r-janitor=1.2.0
   - r-jsonlite=1.6
@@ -279,6 +285,7 @@ dependencies:
   - r-snakecase=0.11.0
   - r-sourcetools=0.1.7
   - r-sparklyr=1.0.5
+  - r-storr=1.2.1
   - r-stringdist=0.9.5.5
   - r-stringi=1.4.3
   - r-stringr=1.4.0
@@ -288,6 +295,7 @@ dependencies:
   - r-tidyr=1.0.0
   - r-tidyselect=0.2.5
   - r-tinytex=0.18
+  - r-txtq=0.2.0
   - r-usethis=1.5.1
   - r-utf8=1.1.4
   - r-vctrs=0.2.0
