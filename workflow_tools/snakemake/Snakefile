@@ -41,14 +41,40 @@ def package_specific_files(wildcards):
 ###############################################################################
 
 # Typically: results/pooled/cloc.tsv and results/pooled/gitsum.tsv
+pooled_datasets = [
+    join(config["pooled_results_dir"], config["analysis_basenames"]["cloc"]),
+    join(config["pooled_results_dir"], config["analysis_basenames"]["gitsum"])
+]
+#expand(
+#    join("{results_dir}", "{basename}"),
+#    results_dir=config["pooled_results_dir"],
+#    basename=config["analysis_basenames"].values()
+#)
 
 rule all:
     input:
-        expand(
-            join("{results_dir}", "{basename}"),
-            results_dir=config["pooled_results_dir"],
-            basename=config["analysis_basenames"].values()
-        )
+        join("doc", "notebook.html")
+
+###############################################################################
+#
+# ---- REPORT ---- #
+
+rule compile_markdown:
+    message:
+        """
+        --- Render an Rmarkdown document to .html
+        """
+    input:
+        script = join("doc", "notebook.Rmd"),
+        data = pooled_datasets
+    output:
+        join("doc", "notebook.html")
+    params:
+        outdir = "doc"
+    shell:
+        """
+        Rscript -e "rmarkdown::render('{input.script}', output_file = '{output}', output_dir = '{params.outdir}')"
+        """
 
 ###############################################################################
 #
