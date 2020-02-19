@@ -1,0 +1,24 @@
+---
+
+repo_details_file: "conf/repositories.tsv"
+repo_dir: "data/packages"
+
+# Store results for pooled-analysis over the different packages here:
+# `<pooled_results_dir>/<analysis_basename>`
+pooled_results_dir: "results/pooled"
+
+# Store results for individual packages in package-specific subdirectories:
+# `<pkg_results_dir>/<pkg_name>/<analysis_basename>`
+pkg_results_dir: "results/packages"
+
+analysis_basenames:
+  cloc: "cloc.tsv"
+  gitsum: "gitsum.tsv"
+
+# Scripts for running the analyses:
+scripts:
+  clone: "scripts/github-clone.R"
+  cloc: "scripts/cloc-analysis.R"
+  gitsum: "scripts/gitsum-analysis.R"
+  rowbind: "scripts/rowbind-tsv.R"
+...

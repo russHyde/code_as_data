@@ -1,0 +1,172 @@
+import pandas as pd
+from os.path import join
+
+###############################################################################
+
+my_config = join("conf", "config.yaml")
+
+configfile: my_config
+
+repositories = pd.read_csv(
+    config["repo_details_file"], delimiter="\t", comment="#"
+    ).set_index("package", drop=False)
+
+packages=repositories["package"].tolist()
+
+###############################################################################
+
+def get_github_url(wildcards):
+    return repositories.loc[wildcards["package"], "remote_repo"]
+
+def package_specific_files(wildcards):
+    """
+    Each single-repo analysis generates a file
+    `<pkg_specific_dir>/<pkg_name>/<basename>.tsv`
+    We combine these results together into a single .tsv
+    `<pooled_results_dir>/<basename>.tsv`
+
+    Note that the basenames are identical.
+
+    For a given analysis-type (cloc or gitsum), we determine all the single-repo
+    input files that are required to create the pooled output file.
+    """
+    files = expand(
+        join("{parent_dir}", "{package}", "{suffix}"),
+        parent_dir=config["pkg_results_dir"],
+        package=packages,
+        suffix=wildcards["basename"]
+    )
+    return files
+
+###############################################################################
+
+# Typically: results/pooled/cloc.tsv and results/pooled/gitsum.tsv
+pooled_datasets = [
+    join(config["pooled_results_dir"], config["analysis_basenames"]["cloc"]),
+    join(config["pooled_results_dir"], config["analysis_basenames"]["gitsum"])
+]
+#expand(
+#    join("{results_dir}", "{basename}"),
+#    results_dir=config["pooled_results_dir"],
+#    basename=config["analysis_basenames"].values()
+#)
+
+rule all:
+    input:
+        join("doc", "notebook.html")
+
+###############################################################################
+#
+# ---- REPORT ---- #
+
+rule compile_markdown:
+    message:
+        """
+        --- Render an Rmarkdown document to .html
+        """
+    input:
+        script = join("doc", "notebook.Rmd"),
+        data = pooled_datasets
+    output:
+        join("doc", "notebook.html")
+    params:
+        outdir = "doc"
+    shell:
+        """
+        Rscript -e "rmarkdown::render('{input.script}', output_file = '{output}', output_dir = '{params.outdir}')"
+        """
+
+###############################################################################
+#
+# ---- REDUCE ---- #
+
+rule collapse_tsv:
+    message:
+        """
+        --- Combine a set of tab-separated files (one for each studied repo)
+        """
+    input:
+        data = package_specific_files,
+        script = config["scripts"]["rowbind"]
+    output:
+        join(config["pooled_results_dir"], "{basename}")
+    wildcard_constraints:
+        basename="|".join(config["analysis_basenames"].values())
+    shell:
+        """
+        Rscript {input.script} --output {output} {input.data}
+        """
+
+# ---- MAP ---- #
+
+rule single_repo_gitsum:
+    message:
+        """
+        --- Analyse the git commits for a single repository
+        """
+    input:
+        repo = ancient(
+            join(config["repo_dir"], "{package}"),
+        ),
+        script = config["scripts"]["gitsum"]
+    output:
+        join(
+            config["pkg_results_dir"],
+            "{package}",
+            config["analysis_basenames"]["gitsum"]
+        )
+    shell:
+        """
+        Rscript {input.script} \
+            --local_repo {input.repo} \
+            --package_name {wildcards.package} \
+            --output {output}
+        """
+
+rule single_repo_cloc:
+    message:
+        """
+        --- Analyse the lines-of-code for each file in a single repository
+        """
+    input:
+        repo = ancient(
+            join(config["repo_dir"], "{package}"),
+        ),
+        script = config["scripts"]["cloc"]
+    output:
+        join(
+            config["pkg_results_dir"],
+            "{package}",
+            config["analysis_basenames"]["cloc"]
+        )
+    shell:
+        """
+        Rscript {input.script} \
+            --local_repo {input.repo} \
+            --package_name {wildcards.package} \
+            --output {output}
+        """
+
+###############################################################################
+
+# ---- CLONE ---- #
+
+rule clone_repo:
+    message:
+        """
+        --- Clone the github repo for a single package
+        """
+    input:
+        script = config["scripts"]["clone"]
+    output:
+        local_repo = directory(join(config["repo_dir"], "{package}"))
+    params:
+        remote_repo=lambda wildcards: get_github_url(wildcards)
+    shell:
+        """
+        Rscript {input.script} \
+            --remote_repo {params.remote_repo} \
+            --local_repo {output.local_repo}
+        """
+
+###############################################################################
