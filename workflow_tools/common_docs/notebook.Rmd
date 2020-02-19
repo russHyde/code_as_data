@@ -1,0 +1,14 @@
+---
+title: '`r paste0("Workflow Comparison Notebook: ", params$workflow_manager)`'
+author: "Russell Hyde"
+date: '`r format(Sys.time(), "%Y-%m-%d")`'
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+params:
+  workflow_manager: "snakemake"
+urlcolor: blue
+---
+
+ABC
