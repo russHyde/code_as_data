@@ -7,9 +7,9 @@ my_config = join("conf", "config.yaml")
 
 configfile: my_config
 
-repositories = pd.read_table(
-    config["repo_details_file"]
-).set_index("package", drop=False)
+repositories = pd.read_csv(
+    config["repo_details_file"], delimiter="\t", comment="#"
+    ).set_index("package", drop=False)
 
 packages=repositories["package"].tolist()
 
