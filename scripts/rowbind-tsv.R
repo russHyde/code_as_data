@@ -56,13 +56,13 @@ define_collapsible_files <- function(opt) {
 
   raw_files <- if (!is.null(options[["input_files"]])) {
     # the files to collapse are all defined inside a single file
-    scan(here::here(options[["input_files"]]), what = "character")
+    scan(options[["input_files"]], what = "character")
   } else {
     # all files in the unnamed, trailing arguments are to be collapsed
     trailing
   }
 
-  here::here(raw_files)
+  raw_files
 }
 
 ###############################################################################
@@ -79,7 +79,7 @@ import_and_collapse <- function(files) {
 main <- function(
     opt
 ) {
-  results_file <- here::here(opt$options$output)
+  results_file <- opt$options$output
 
   collapsible_files <- define_collapsible_files(opt)
 
