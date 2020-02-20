@@ -13,28 +13,30 @@
   Code is based on https://groups.google.com/forum/#!topic/nextflow/T7zDmtLAzSQ
 */
 
-
 Channel
     .fromPath(params.repo_details_file)
     // split as if a tab-separated file, note that first line is the header
     .splitCsv(header:true, sep:"\t")
     // keep the package, remote_repo and local_repo columns for each row
-    .map{ row -> tuple(row.package, row.remote_repo, file(row.local_repo)) }
+    .map{ row -> tuple(row.package, row.remote_repo, row.local_repo) }
     // remove comment lines
     .filter{ row -> row[0] =~ /^[^#].*/ }
-    // then name the channel "repositories_ch"
-    .set{ repositories_ch }
+    // then give the channel a name
+    .set{ repository_details_ch }
 
-process helloRepo {
+process clone {
+
+    // long-term cache: don't download the repo if a local copy already exists
+    storeDir "."
+
     input:
-        set repository, remote_repo, file(local_repo) from repositories_ch
+        tuple repository, remote_repo, local_repo from repository_details_ch
 
     output:
-        stdout result
+        tuple repository, file(local_repo) into repository_dirs_ch
 
-    """
-    echo "Hello, ${repository}"
-    """
+    script:
+        """
+        ${task.script} --remote_repo ${remote_repo} --local_repo ${local_repo}
+        """
 }
-
-result.view { it.trim() }
