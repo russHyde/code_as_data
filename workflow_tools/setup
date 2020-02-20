@@ -56,8 +56,8 @@ fi
 
 if [[ ! -f "${local_repo_file}" ]] || \
     [[ "${local_repo_file}" -ot "${global_repo_file}" ]]; then
-  echo "Taking the first 10 repos for use in workflow-comparison subjob" >&2
-  head -n11 "${global_repo_file}" > "${local_repo_file}"
+  echo "Taking the first 3 repos for use in workflow-comparison subjob" >&2
+  head -n4 "${global_repo_file}" > "${local_repo_file}"
 fi
 
 ###############################################################################
