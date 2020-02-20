@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 ###############################################################################
 
 # For a given package, we count the nummber of lines of R code using the `cloc`
