@@ -67,7 +67,7 @@ repository_dirs_ch.into { datasets_cloc; datasets_gitsum }
 
 process cloc {
 
-    publishDir "results/packages/${repository}"
+    publishDir "${params.pkg_results_dir}/${repository}"
 
     // treat the repository directory as a file
     input:
@@ -94,7 +94,7 @@ process gitsum {
     // process, we can't define `publishDir` in the config [if "blah/${xyz}"
     // is in the config, the field 'xyz' must be defined in the config
     // somewhere]
-    publishDir "results/packages/${repository}"
+    publishDir "${params.pkg_results_dir}/${repository}"
 
     input:
         tuple repository, file(local_repo) from datasets_gitsum
@@ -111,12 +111,22 @@ process gitsum {
         """
 }
 
-process rowbind {
+process reduce_cloc {
 
-    publishDir "results/pooled"
+    // Because we've set the label to "pooled_results", this process will take
+    // some directives defined in the "withLabel: pooled_results {}" section of
+    // the process block in the config file
+    //
+    // Presently, that just means that the publishDir is set by the config for
+    // any process with label `pooled_results`
+    //
+    // Note that there is a precedence for defining directives:
+    // withName (in the config) > withLabel > process-specific vals (in the
+    // script) > generic values
+    label "pooled_results"
 
-    // this is a `reduce` step, so all the files that are emitted by the cloc-analysis
-    // channel are collected into a single object
+    // this is a `reduce` step, so all the files that are emitted by the
+    // cloc-analysis channel are collected into a single object
     input:
         val fs from single_repo_cloc_files.collect()
 
@@ -129,6 +139,26 @@ process rowbind {
     // `my_script.R --output some_file input1 input2 input3 ...`
     script:
         """
-        ${task.script} --output "cloc.tsv" ${fs.join(" ")}
+        ${params.rowbind_script} --output "cloc.tsv" ${fs.join(" ")}
+        """
+}
+
+process reduce_gitsum {
+
+    // This is almost identical to the `reduce_cloc` process and I can't work
+    // out how (or whether it's worth) deduplicating the two processes could be
+    // done
+
+    label "pooled_results"
+
+    input:
+        val fs from single_repo_gitsum_files.collect()
+
+    output:
+        file "gitsum.tsv" into multi_repo_gitsum_file
+
+    script:
+        """
+        ${params.rowbind_script} --output "gitsum.tsv" ${fs.join(" ")}
         """
 }
