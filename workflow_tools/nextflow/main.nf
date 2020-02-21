@@ -110,3 +110,25 @@ process gitsum {
             --output "gitsum.tsv"
         """
 }
+
+process rowbind {
+
+    publishDir "results/pooled"
+
+    // this is a `reduce` step, so all the files that are emitted by the cloc-analysis
+    // channel are collected into a single object
+    input:
+        val fs from single_repo_cloc_files.collect()
+
+    output:
+        file "cloc.tsv" into multi_repo_cloc_file
+
+    // `fs` is a collection of filenames for those files that are to be
+    // combined together.
+    // This script will combine together any number of files and uses syntax
+    // `my_script.R --output some_file input1 input2 input3 ...`
+    script:
+        """
+        ${task.script} --output "cloc.tsv" ${fs.join(" ")}
+        """
+}
