@@ -25,12 +25,11 @@ Channel
     .set{ repository_details_ch }
 
 process clone {
-
     // Directives (process-associated variables) are either defined here
     // using syntax `<directiveName> <someValue>` or in the `process` block of
     // the config file.
     //
-    // nextflow has a defined set of directive names ('afterScruot',
+    // nextflow has a defined set of directive names ('afterScript',
     // 'beforeScript', 'cache', 'conda', ...) and complains if you use an
     // unexpected directive name (but doesn't prevent you from doing this).
     //
@@ -39,13 +38,10 @@ process clone {
 
     // long-term cache: don't download the repo if a local copy already exists
     storeDir "."
-
     input:
         tuple repository, remote_repo, local_repo from repository_details_ch
-
     output:
         tuple repository, file(local_repo) into repository_dirs_ch
-
     script:
         """
         ${task.script} --remote_repo ${remote_repo} --local_repo ${local_repo}
@@ -66,23 +62,17 @@ process clone {
 repository_dirs_ch.into { datasets_cloc; datasets_gitsum }
 
 process cloc {
-
     publishDir "${params.pkg_results_dir}/${repository}"
-
     // treat the repository directory as a file
     input:
         tuple repository, file(local_repo) from datasets_cloc
-
     // note that you don't need to construct a package-specific path //
     output:
         file "cloc.tsv" into single_repo_cloc_files
-
     script:
         """
-        ${task.script} \
-            --package_name "${repository}" \
-            --local_repo "${local_repo}" \
-            --output "cloc.tsv"
+        cloc-analysis.R --package_name "${repository}" \
+            --local_repo "${local_repo}" --output "cloc.tsv"
         """
 }
 
@@ -104,7 +94,7 @@ process gitsum {
 
     script:
         """
-        ${task.script} \
+        gitsum-analysis.R \
             --package_name "${repository}" \
             --local_repo "${local_repo}" \
             --output "gitsum.tsv"
