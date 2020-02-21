@@ -13,6 +13,15 @@
   Code is based on https://groups.google.com/forum/#!topic/nextflow/T7zDmtLAzSQ
 */
 
+/*
+  "channels" are how filenames, computed values etc are passed between the
+  recipes in nextflow
+*/
+
+// There are two main ways to define a channel and associate it with a name:
+// Channel.{ ... pipeline ... }.set{ some_name }
+// some_name = Channel.{ ... pipeline ... }
+
 Channel
     .fromPath(params.repo_details_file)
     // split as if a tab-separated file, note that first line is the header
@@ -23,6 +32,12 @@ Channel
     .filter{ row -> row[0] =~ /^[^#].*/ }
     // then give the channel a name
     .set{ repository_details_ch }
+
+markdown_ch = Channel.fromPath(params.rmarkdown_file)
+
+/*
+  "processes" are similar to "rules" in snakemake
+*/
 
 process clone {
     // Directives (process-associated variables) are either defined here
@@ -135,9 +150,9 @@ process reduce_cloc {
 
 process reduce_gitsum {
 
-    // This is almost identical to the `reduce_cloc` process and I can't work
-    // out how (or whether it's worth) deduplicating the two processes could be
-    // done
+    // This process almost identical to the `reduce_cloc` process and I can't
+    // work out how (or whether it's worth) deduplicating the two processes
+    // could be done
 
     label "pooled_results"
 
@@ -150,5 +165,68 @@ process reduce_gitsum {
     script:
         """
         ${params.rowbind_script} --output "gitsum.tsv" ${fs.join(" ")}
+        """
+}
+
+
+process compile_markdown {
+
+    // Please note that the following is a major hack.
+    //
+    // The way that rmarkdown/knitr and nextflow manage filepaths jars a bit.
+    //
+    // {rmarkdown} / {knitr} expect filepaths to be specified relative to the
+    // position of the .Rmd (and make your life a nightmare otherwise); but I
+    // want all notebooks to site in the doc/ subdir of my projects (so
+    // rmd-relative paths differ from project-root-relative paths)
+    //
+    // As such, when I write .Rmd files, i use here::here() to pin filepaths
+    // relative to the project-root
+    //
+    // But, nextflow processes run with a working directory that differs from
+    // the project root; and it is difficult to pass in all filepaths that
+    // might be required by the rmarkdown rendering step. So ensuring that an
+    // .Rmd knows where to get data from is further complicated under nextflow.
+    //
+    // Workaround:
+    // 1) ensure all files that may be required during Rmarkdown rendering are
+    // pushed into `publishDir` or `storeDir`;
+    // 2) ensure the channels for the corresponding files are 'input's for the
+    // markdown rendering step;
+    // 3) write the markdown so that it accesses any required data via
+    // here()-based project-root relative paths (note this means the channels
+    // containing the relevant data won't actually be used); I'd usually pass
+    // in the root-relative filepaths from a config;
+    // 4) ensure the nextflow working-directory is a subdirectory of the
+    // project root (and that a .here or .git or .Rproj file is present in the
+    // project root)
+    //
+    // [BUG ALERT: {rmarkdown}] note that a nextflow process runs inside a
+    // working directory that contains symlinks to the inputs for that process
+    // but, when a *.Rmd filepath is a symlink to a target location, rmarkdown
+    // renders and stores the report in the target directory not the link
+    // directory: https://github.com/rstudio/rmarkdown/issues/1508  To
+    // circumvent this, we use `output_dir = getwd()` to ensure the report is
+    // put into the nextflow working directory for the current process.
+
+    publishDir "doc"
+
+    input:
+        file rmd    from markdown_ch
+        file gitsum from multi_repo_gitsum_file
+        file cloc   from multi_repo_cloc_file
+
+    output:
+        file "notebook.html" into markdown_report
+
+    script:
+        """
+        #!/usr/bin/env Rscript
+        rmarkdown::render(
+            input = "${rmd}",
+            quiet = TRUE,
+            output_dir = getwd(),
+            params = list(workflow_manager = "nextflow")
+        )
         """
 }
