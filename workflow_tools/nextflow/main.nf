@@ -26,6 +26,17 @@ Channel
 
 process clone {
 
+    // Directives (process-associated variables) are either defined here
+    // using syntax `<directiveName> <someValue>` or in the `process` block of
+    // the config file.
+    //
+    // nextflow has a defined set of directive names ('afterScruot',
+    // 'beforeScript', 'cache', 'conda', ...) and complains if you use an
+    // unexpected directive name (but doesn't prevent you from doing this).
+    //
+    // You can access directive values using "${task.directiveName}" in the
+    // 'script' section.
+
     // long-term cache: don't download the repo if a local copy already exists
     storeDir "."
 
@@ -38,5 +49,26 @@ process clone {
     script:
         """
         ${task.script} --remote_repo ${remote_repo} --local_repo ${local_repo}
+        """
+}
+
+process cloc {
+
+    publishDir "results/packages/${repository}"
+
+    // treat the repository directory as a file
+    input:
+        tuple repository, file(local_repo) from repository_dirs_ch
+
+    // note that you don't need to construct a package-specific path //
+    output:
+        file "cloc.tsv" into single_repo_cloc_files
+
+    script:
+        """
+        ${task.script} \
+            --package_name "${repository}" \
+            --local_repo "${local_repo}" \
+            --output "cloc.tsv"
         """
 }
