@@ -11,4 +11,32 @@ params:
 urlcolor: blue
 ---
 
-ABC
+```{r}
+getwd()
+```
+
+```{r}
+library(here)
+
+suppressPackageStartupMessages({
+  library(readr)
+  library(dplyr)
+  library(ggplot2)
+})
+```
+
+```{r}
+dirs <- list(
+  pooled_results = here("results", "pooled")
+)
+```
+
+```{r}
+gitsum <- readr::read_tsv(
+  file.path(dirs$pooled_results, "gitsum.tsv"), col_types = readr::cols()
+)
+```
+
+```{r}
+gitsum
+```

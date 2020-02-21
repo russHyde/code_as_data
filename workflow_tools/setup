@@ -61,3 +61,21 @@ if [[ ! -f "${local_repo_file}" ]] || \
 fi
 
 ###############################################################################
+
+#' We make a hard copy of the current notebook.Rmd into each analysis directory
+# because, rmarkdown::render(some_sym_link) puts the output .html into the
+# directory containing the linked file (ie, common_docs/) rather than the dir
+# containing the link (this also means that all here()-based root-relative
+# paths in an rmarkdown document are computed relative to nearest parental-root
+# above common_docs)
+#
+# See: https://github.com/rstudio/rmarkdown/issues/1508
+
+for tool in snakemake nextflow; do
+  if [[ ! -f "${tool}/doc/notebook.Rmd" ]] || \
+    [[ "${tool}/doc/notebook.Rmd" -ot "common_docs/notebook.Rmd" ]]; then
+    cp "common_docs/notebook.Rmd" "${tool}/doc/notebook.Rmd"
+  fi
+done
+
+###############################################################################
