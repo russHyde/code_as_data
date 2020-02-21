@@ -52,13 +52,26 @@ process clone {
         """
 }
 
+/*
+  The cloned repositories (which have been pushed into channel
+  'repository_dirs_ch') are to be analysed by both cloc and by gitsum.
+
+  It isn't possible to use the same channel as input to two different processes
+  (unless that channel only contains a single entry).
+
+  But, you can replicate a channel into multiple channels, and use one of the
+  resulting channels as input.
+*/
+
+repository_dirs_ch.into { datasets_cloc; datasets_gitsum }
+
 process cloc {
 
     publishDir "results/packages/${repository}"
 
     // treat the repository directory as a file
     input:
-        tuple repository, file(local_repo) from repository_dirs_ch
+        tuple repository, file(local_repo) from datasets_cloc
 
     // note that you don't need to construct a package-specific path //
     output:
@@ -70,5 +83,30 @@ process cloc {
             --package_name "${repository}" \
             --local_repo "${local_repo}" \
             --output "cloc.tsv"
+        """
+}
+
+process gitsum {
+
+    // Save a link to the gitsum results in this directory
+    //
+    // Note, since the `repository` will be different for each run of this
+    // process, we can't define `publishDir` in the config [if "blah/${xyz}"
+    // is in the config, the field 'xyz' must be defined in the config
+    // somewhere]
+    publishDir "results/packages/${repository}"
+
+    input:
+        tuple repository, file(local_repo) from datasets_gitsum
+
+    output:
+        file "gitsum.tsv" into single_repo_gitsum_files
+
+    script:
+        """
+        ${task.script} \
+            --package_name "${repository}" \
+            --local_repo "${local_repo}" \
+            --output "gitsum.tsv"
         """
 }
