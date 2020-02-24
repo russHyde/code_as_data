@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 ###############################################################################
 
 # pkgs required for running the script

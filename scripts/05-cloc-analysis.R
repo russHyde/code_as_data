@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 ###############################################################################
 
 # For a given package, we count the nummber of lines of R code using the `cloc`
@@ -84,10 +86,11 @@ main <- function(local_repo, package, results_file) {
 
 opt <- optparse::parse_args(define_parser())
 
+# ? TODO: wrap local and results with here()
 main(
-  local_repo = here(opt$local_repo),
+  local_repo = opt$local_repo,
   package = opt$package_name,
-  results_file = here(opt$output)
+  results_file = opt$output
 )
 
 ###############################################################################

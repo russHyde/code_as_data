@@ -43,6 +43,8 @@ logs
 log.txt
 
 .snakemake
+**/.nextflow/*
+.nextflow.log*
 .Rhistory
 *.Rcheck
 .ipynb_checkpoints

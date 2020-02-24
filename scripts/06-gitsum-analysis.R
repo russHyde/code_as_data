@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 ###############################################################################
 
 # pkgs require for running the script
@@ -73,9 +75,9 @@ main <- function(local_repo, package, results_file) {
 opt <- optparse::parse_args(define_parser())
 
 main(
-  local_repo = here(opt$local_repo),
+  local_repo = opt$local_repo,
   package = opt$package_name,
-  results_file = here(opt$output)
+  results_file = opt$output
 )
 
 ###############################################################################
