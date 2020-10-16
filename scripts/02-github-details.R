@@ -128,10 +128,12 @@ define_repositories <- function(pkg_table, repo_dir) {
     file.path(repo_dir, pkg_table$package)
   }
 
-  tibble::tibble(
-    package = pkg_table$package,
-    remote_repo = define_remote(),
-    local_repo = define_local()
+  unique(
+    tibble::tibble(
+      package = pkg_table$package,
+      remote_repo = define_remote(),
+      local_repo = define_local()
+    )
   )
 }
 
