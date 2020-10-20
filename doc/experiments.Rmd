@@ -1,0 +1,189 @@
+---
+title: "Experiments for Code-as-Data"
+author: "Russell Hyde"
+date: "19 October 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(here)
+```
+
+```{r}
+pkgs <- c(
+  "dplyr",
+  "forcats",
+  "ggplot2",
+  "magrittr",
+  "readr"
+)
+
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(
+    library(pkg, character.only = TRUE)
+  )
+}
+```
+
+```{r}
+dirs <- list(
+  results = here("results")
+)
+```
+
+```{r}
+# Files for cross-package comparison
+files <- list(
+  cloc = file.path(dirs[["results"]], "dev-pkg-cloc.tsv"),
+  gitsum = file.path(dirs[["results"]], "dev-pkg-gitsum.tsv")
+)
+```
+
+# Dataset
+
+```{r}
+gitsum <- readr::read_tsv(files[["gitsum"]], col_types = readr::cols())
+head(gitsum)
+```
+
+```{r}
+cloc <- list()
+
+cloc$by_file <- readr::read_tsv(
+  files[["cloc"]],
+  col_types = readr::cols()
+) %>%
+  # convert "some/path/to/R/filename.R" to "R/filename.R" to match the gitsum
+  # filenames
+  mutate(
+    filename = gsub(".*\\/(R\\/.*)$", "\\1", x = filename)
+  )
+
+cloc$by_pkg <- cloc[["by_file"]] %>%
+  group_by(package) %>%
+  summarise_if(is.numeric, sum)
+```
+
+```{r}
+head(cloc$by_file)
+```
+
+```{r}
+head(cloc$by_pkg)
+```
+
+```{r}
+# Obtain the total number of commits, contributors and lines-of-code for each
+# package
+pkg_summary <- gitsum %>%
+  group_by(package) %>%
+  summarise(
+    n_commits = n_distinct(hash),
+    n_contributors = n_distinct(author_email)
+  ) %>%
+  inner_join(
+    cloc$by_pkg,
+    by = "package"
+  )
+
+head(pkg_summary[, 1:4])
+```
+
+# Which package has the most commits / contributors / lines-of-code?
+
+```{r}
+pkg_summary %>% arrange(desc(n_commits))
+pkg_summary %>% arrange(desc(n_contributors))
+pkg_summary %>% arrange(desc(loc))
+```
+
+```{r, message=FALSE}
+pkg_summary %>%
+  ggplot(aes(x = loc)) +
+  geom_histogram() +
+  scale_x_log10()
+```
+
+```{r}
+p <- pkg_summary %>%
+  ggplot(aes(label = package)) +
+  scale_x_log10() +
+  scale_y_log10()
+
+p + geom_text(aes(x = loc, y = n_commits))
+```
+
+```{r}
+p + geom_text(aes(x = loc, y = jitter(n_contributors)))
+```
+
+```{r}
+p + geom_text(aes(x = n_commits, y = jitter(n_contributors), alpha = log10(loc)))
+```
+
+# Analysis of {lintr}
+
+## Change frequency for the files
+
+```{r}
+lintr <- list()
+lintr$commits <- filter(gitsum, package == "lintr")
+lintr$cloc <- filter(cloc$by_pkg, package == "lintr")
+```
+
+```{r}
+lintr$by_file <- lintr$commits %>%
+  rename(filename = changed_file) %>%
+  group_by(filename) %>%
+  summarise(n_changes = n()) %>%
+  inner_join(
+    filter(cloc$by_file, package == "lintr"),
+    by = "filename"
+  )
+```
+
+```{r}
+lintr$by_file %>%
+  ggplot(
+    aes(
+      x = fct_reorder(filename, n_changes, .desc = TRUE),
+      y = n_changes
+    )
+  ) +
+  geom_bar(stat = "identity") +
+  xlab("Filename") +
+  scale_x_discrete(breaks=NULL)
+```
+
+```{r}
+lintr$by_file %>%
+  ggplot(
+    aes(
+      x = fct_reorder(filename, n_changes, .desc = TRUE),
+      y = loc
+    )
+  ) +
+  geom_bar(stat = "identity") +
+  xlab("Filename") +
+  scale_x_discrete(breaks=NULL)
+```
+
+```{r}
+lintr$by_file %>%
+  ggplot(
+    aes(
+      x = loc,
+      y = n_changes,
+      label = filename
+    )
+  ) +
+  geom_text() +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+## Change correlations between files
