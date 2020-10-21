@@ -46,7 +46,13 @@ files <- list(
 # Dataset
 
 ```{r}
-gitsum <- readr::read_tsv(files[["gitsum"]], col_types = readr::cols())
+gitsum <- readr::read_tsv(
+  files[["gitsum"]],
+  col_types = readr::cols()
+) %>%
+  # for consistency with cloc 'filename' column
+  rename(filename = changed_file)
+
 head(gitsum)
 ```
 
@@ -105,7 +111,9 @@ pkg_summary %>% arrange(desc(loc))
 pkg_summary %>%
   ggplot(aes(x = loc)) +
   geom_histogram() +
-  scale_x_log10()
+  scale_x_log10() +
+  xlab("Lines of code") +
+  ggtitle(label = "The R packages differ greatly in size")
 ```
 
 ```{r}
@@ -122,7 +130,12 @@ p + geom_text(aes(x = loc, y = jitter(n_contributors)))
 ```
 
 ```{r}
-p + geom_text(aes(x = n_commits, y = jitter(n_contributors), alpha = log10(loc)))
+p +
+  geom_text(aes(x = n_commits, y = jitter(n_contributors), alpha = loc)) +
+  xlab("Number of Commits") +
+  ylab("Number of Contributors (jittered)") +
+  ggtitle("Contributions / Contributor numbers differ greatly") +
+  scale_alpha_continuous(trans = "log10", name = "Lines of code")
 ```
 
 # Analysis of {lintr}
@@ -130,20 +143,60 @@ p + geom_text(aes(x = n_commits, y = jitter(n_contributors), alpha = log10(loc))
 ## Change frequency for the files
 
 ```{r}
-lintr <- list()
-lintr$commits <- filter(gitsum, package == "lintr")
-lintr$cloc <- filter(cloc$by_pkg, package == "lintr")
+summarise_commits_by_file <- function(commits, cloc_by_file) {
+  commits %>%
+    group_by(package, filename) %>%
+    summarise(n_changes = n()) %>%
+    inner_join(
+      cloc_by_file,
+      by = c("package", "filename")
+    )
+}
 ```
 
 ```{r}
-lintr$by_file <- lintr$commits %>%
-  rename(filename = changed_file) %>%
-  group_by(filename) %>%
-  summarise(n_changes = n()) %>%
-  inner_join(
-    filter(cloc$by_file, package == "lintr"),
-    by = "filename"
-  )
+compute_comodification <- function(x) {
+  stopifnot(all(c("package", "filename", "hash") %in% colnames(x)))
+
+  x %>%
+    dplyr::select(package, filename, hash) %>%
+    # Determine all pairs of files that are modified within a given commit:
+    inner_join(x = ., y = ., by = c("hash", "package")) %>%
+    # Count the number of commits where a given pair of files is co-modified:
+    group_by(package, filename.x, filename.y) %>%
+    summarise(n_commits = n()) %>%
+    # In what fraction of the commits where file X is modified, is file Y also
+    # modified?
+    group_by(package, filename.x) %>%
+    mutate(
+      fraction_comodified = n_commits / max(n_commits)
+    )
+}
+```
+
+```{r}
+plot_file_commits_by_author <- function(commits) {
+  commits %>%
+    ggplot(
+      aes(
+        x = fct_infreq(filename),
+        fill = fct_lump(fct_infreq(author_name), n = 7)
+      )
+    ) +
+    geom_bar() +
+    xlab("Filename") +
+    ylab("Number of Commits") +
+    scale_x_discrete(breaks = NULL) +
+    scale_fill_discrete(name = "Author")
+}
+```
+
+```{r}
+lintr <- list()
+lintr$commits <- filter(gitsum, package == "lintr")
+lintr$cloc <- filter(cloc$by_pkg, package == "lintr")
+lintr$by_file <- summarise_commits_by_file(lintr$commits, cloc$by_file)
+lintr$comod <- compute_comodification(lintr[["commits"]])
 ```
 
 ```{r}
@@ -156,7 +209,7 @@ lintr$by_file %>%
   ) +
   geom_bar(stat = "identity") +
   xlab("Filename") +
-  scale_x_discrete(breaks=NULL)
+  scale_x_discrete(breaks = NULL)
 ```
 
 ```{r}
@@ -169,11 +222,15 @@ lintr$by_file %>%
   ) +
   geom_bar(stat = "identity") +
   xlab("Filename") +
-  scale_x_discrete(breaks=NULL)
+  scale_x_discrete(breaks = NULL)
 ```
 
 ```{r}
-lintr$by_file %>%
+plot_file_commits_by_author(lintr$commits)
+```
+
+```{r}
+p_loc_vs_commits <- lintr$by_file %>%
   ggplot(
     aes(
       x = loc,
@@ -183,7 +240,54 @@ lintr$by_file %>%
   ) +
   geom_text() +
   scale_x_log10() +
-  scale_y_log10()
+  scale_y_log10() +
+  xlab("Lines of Code") +
+  ylab("Number of Commits")
+
+p_loc_vs_commits
 ```
 
 ## Change correlations between files
+
+```{r}
+head(lintr$comod)
+```
+
+<!-- TODO: tidygraph of the comodification data -->
+
+# Do the same but for shiny
+
+```{r}
+shiny <- list()
+shiny$commits <- filter(gitsum, package == "shiny")
+shiny$cloc <- filter(cloc$by_pkg, package == "shiny")
+shiny$by_file <- summarise_commits_by_file(shiny$commits, cloc$by_file)
+shiny$comod <- compute_comodification(shiny[["commits"]])
+```
+
+```{r}
+plot_file_commits_by_author(shiny$commits)
+```
+
+```{r}
+p_loc_vs_commits %+% shiny$by_file
+```
+
+```{r}
+edges <- shiny$comod[, c("filename.x", "filename.y", "n_commits", "fraction_comodified")] %>%
+  filter(filename.x != filename.y & filename.x %in% shiny$by_file$filename) %>%
+  filter(n_commits > 5 & fraction_comodified > 0.5)
+
+vertices <- shiny$by_file[-1] %>%
+  filter(filename %in% edges$filename.x | filename %in% edges$filename.y)
+
+g <- igraph::graph_from_data_frame(edges, vertices = vertices)
+```
+
+```{r}
+plot(g, color = 5 * vertices$loc, layout = layout_with_fr)
+```
+
+```{r}
+filter(edges, filename.x == "R/timer.R")
+```
