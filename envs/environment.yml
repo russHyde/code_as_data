@@ -7,6 +7,7 @@ channels:
   - defaults
 dependencies:
   - _libgcc_mutex=0.1
+  - _openmp_mutex=4.5
   - _r-mutex=1.0.1
   - aioeasywebdav=2.4.0
   - aiohttp=3.6.2
@@ -20,10 +21,10 @@ dependencies:
   - botocore=1.14.9
   - bwidget=1.9.14
   - bzip2=1.0.8
-  - ca-certificates=2019.11.28
+  - ca-certificates=2020.6.20
   - cachetools=3.1.1
   - cairo=1.16.0
-  - certifi=2019.11.28
+  - certifi=2020.6.20
   - cffi=1.13.2
   - chardet=3.0.4
   - configargparse=0.13.0
@@ -31,7 +32,7 @@ dependencies:
   - cryptography=2.8
   - curl=7.65.3
   - cyrus-sasl=2.1.27
-  - datrie=0.8
+  - datrie=0.8.2
   - dbus=1.13.6
   - decorator=4.4.1
   - docutils=0.15.2
@@ -76,6 +77,7 @@ dependencies:
   - icu=58.2
   - idna=2.8
   - imagemagick=7.0.8_54
+  - importlib-metadata=1.5.0
   - importlib_metadata=1.5.0
   - inflect=4.0.0
   - ipython_genutils=0.2.0
@@ -96,6 +98,7 @@ dependencies:
   - libffi=3.2.1
   - libgcc-ng=9.2.0
   - libgfortran-ng=7.3.0
+  - libgomp=9.2.0
   - libiconv=1.15
   - liblapack=3.8.0
   - libntlm=1.4
@@ -111,6 +114,7 @@ dependencies:
   - libwebp=1.0.2
   - libxcb=1.13
   - libxml2=2.9.9
+  - llvm-openmp=11.0.0
   - lz4-c=1.8.3
   - make=4.2.1
   - markupsafe=1.1.1
@@ -125,9 +129,9 @@ dependencies:
   - numpy=1.17.5
   - openjdk=8.0.192
   - openjpeg=2.3.1
-  - openssl=1.1.1d
+  - openssl=1.1.1h
   - pandas=1.0.0
-  - pandoc=2.9
+  - pandoc=2.9.2.1
   - pango=1.40.14
   - paramiko=2.7.1
   - pcre=8.43
@@ -152,8 +156,9 @@ dependencies:
   - python=3.7.6
   - python-dateutil=2.8.1
   - python-irodsclient=0.7.0
+  - python_abi=3.7
   - pytz=2019.3
-  - pyyaml=5.3
+  - pyyaml=5.3.1
   - qt=5.6.3
   - r-askpass=1.1
   - r-assertthat=0.2.1
@@ -182,6 +187,7 @@ dependencies:
   - r-crosstalk=1.0.0
   - r-curl=4.3
   - r-cyclocomp=1.1.0
+  - r-data.table=1.11.6
   - r-dbi=1.1.0
   - r-dbplyr=1.4.2
   - r-desc=1.2.0
@@ -191,6 +197,7 @@ dependencies:
   - r-drake=7.10.0
   - r-dt=0.10
   - r-ellipsis=0.3.0
+  - r-enc=0.2.2
   - r-evaluate=0.14
   - r-fansi=0.4.0
   - r-farver=2.0.1
@@ -198,7 +205,10 @@ dependencies:
   - r-filelock=1.0.2
   - r-forcats=0.4.0
   - r-forge=0.2.0
+  - r-formatr=1.7
   - r-fs=1.3.1
+  - r-futile.logger=1.4.3
+  - r-futile.options=1.0.1
   - r-generics=0.0.2
   - r-getopt=1.20.3
   - r-ggplot2=3.2.1
@@ -217,9 +227,10 @@ dependencies:
   - r-igraph=1.2.4.2
   - r-ini=0.3.1
   - r-janitor=1.2.0
-  - r-jsonlite=1.6
+  - r-jsonlite=1.6.1
   - r-knitr=1.26
   - r-labeling=0.3
+  - r-lambda.r=1.2.4
   - r-later=1.0.0
   - r-lattice=0.20_38
   - r-lazyeval=0.2.2
@@ -233,6 +244,7 @@ dependencies:
   - r-mgcv=1.8_29
   - r-mime=0.7
   - r-miniui=0.1.1.1
+  - r-mockery=0.4.2
   - r-mongolite=2.1.0
   - r-munsell=0.5.0
   - r-nlme=3.1_141
@@ -244,6 +256,7 @@ dependencies:
   - r-pkgbuild=1.0.6
   - r-pkgconfig=2.0.3
   - r-pkgload=1.0.2
+  - r-pkgnet=0.4.1
   - r-pki=0.1_5.1
   - r-plogr=0.2.0
   - r-plyr=1.8.5
@@ -266,6 +279,7 @@ dependencies:
   - r-readr=1.3.1
   - r-readxl=1.3.1
   - r-rematch=1.0.1
+  - r-rematch2=2.1.2
   - r-remotes=2.1.0
   - r-reshape2=1.4.3
   - r-rex=1.1.2
@@ -281,7 +295,7 @@ dependencies:
   - r-rversions=2.0.1
   - r-scales=1.1.0
   - r-sessioninfo=1.1.1
-  - r-shiny=1.4.0
+  - r-shiny=1.4.0.2
   - r-snakecase=0.11.0
   - r-sourcetools=0.1.7
   - r-sparklyr=1.0.5
@@ -289,6 +303,7 @@ dependencies:
   - r-stringdist=0.9.5.5
   - r-stringi=1.4.3
   - r-stringr=1.4.0
+  - r-styler=1.0.2
   - r-sys=3.3
   - r-testthat=2.3.1
   - r-tibble=2.1.3
@@ -300,6 +315,7 @@ dependencies:
   - r-utf8=1.1.4
   - r-vctrs=0.2.0
   - r-viridislite=0.3.0
+  - r-visnetwork=2.0.9
   - r-whisker=0.4
   - r-withr=2.1.2
   - r-xfun=0.11
@@ -350,5 +366,5 @@ dependencies:
   - zipp=2.1.0
   - zlib=1.2.11
   - zstd=1.4.4
-prefix: /home/ah327h/tools/miniconda3/envs/code_as_data
+prefix: /home/russ/tools/miniconda3/envs/code_as_data
 
