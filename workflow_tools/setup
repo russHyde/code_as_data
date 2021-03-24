@@ -15,8 +15,10 @@ yaml_value() {
 
 # Ensure the environment is activated
 
-if [[ $(basename "${CONDA_PREFIX}") != "code_as_data" ]]; then
-  echo "Retry with CONDA env 'code_as_data'" >&2
+REQUIRED_ENV="code-as-data"
+
+if [[ $(basename "${CONDA_PREFIX}") != "${REQUIRED_ENV}" ]]; then
+  echo "Retry with CONDA env '${REQUIRED_ENV}'" >&2
   exit 1
 fi
 
