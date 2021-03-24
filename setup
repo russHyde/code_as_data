@@ -18,3 +18,7 @@ for key in "results_dir" "pkg_results_dir" "repo_dir"; do
   dir="$(cat "${config_file}" | shyaml get-value "${key}")"
   if [[ ! -d ${dir} ]]; then mkdir -p ${dir}; fi
 done
+
+# Ensure the R environment is set up
+
+Rscript -e "renv::restore()"
