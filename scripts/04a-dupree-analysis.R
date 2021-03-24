@@ -91,7 +91,8 @@ run_benchmarks <- function(local_repo, min_block_sizes) {
 
 run_dupree_workflow <- function(local_repo, results_file, min_block_size) {
   dups <- dupree::dupree_package(local_repo, min_block_size)
-  readr::write_tsv(dups, results_file)
+  dup_table <- dupree::as_tibble(dups)
+  readr::write_tsv(dup_table, results_file)
 }
 
 # --
