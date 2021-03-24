@@ -1,28 +1,35 @@
-If you've got `conda` installed and want to reproduce the results:
+# code-as-data
+
+## Environment
+
+This project uses
+- `conda` to manage the python-based and command-line tools and to install the
+base R release
+- and `renv` to manage the installation of any R packages
+
+To set up the project, first install the `conda` environment, activate it, then
+install the `renv` environment
+
+Once you've got `conda` installed:
 
 ```
 # To create an identical environment (req Ubuntu)
-conda create --name code_as_data --file envs/requirements.txt
+conda create --name code-as-data --file envs/requirements.txt
 ```
 
 ```
 # To create a similar environment
-conda env create --file envs/environment.yml
+conda env create --file envs/environment.yml --name code-as-data
 ```
 
-Activate the environment
+Activate the conda environment
 
 ```
-conda activate code_as_data
+conda activate code-as-data
 ```
 
-Some of the R packages used in this project are not on anaconda, CRAN or
-Bioconductor. These are installed by the script `scripts/00-setup-env.R`.
-See the 'remotes' entry in the config for details of the packages that are
-installed in this way.
-
-Install any remaining dependencies, and make any non-version-controlled
-directories (data, results etc)
+To install the R environment (and also make any non-version-controlled
+directories: data, results etc):
 
 ```
 ./setup
@@ -32,13 +39,8 @@ directories (data, results etc)
 
 To run the analysis:
 
-First activate the conda environment (if you haven't already)
-
-```
-conda activate code_as_data
-```
-
-Then use the bash script to run the workflow
+Once the environment is setup and activated use the bash script to run the
+workflow
 
 ```
 ./run
