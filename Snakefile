@@ -1,5 +1,5 @@
 import pandas as pd
-from os.path import join
+from os.path import join, dirname
 
 ###############################################################################
 
@@ -81,9 +81,12 @@ rule render_markdown:
     output:
         html = join("doc", "{report_name}.html")
 
+    params:
+        output_dir = lambda wildcards, output: dirname(output["html"])
+
     shell:
         """
-        Rscript -e "rmarkdown::render(input='{input.rmd}', output='{output.html}', output_format='html_document')"
+        Rscript -e "rmarkdown::render(input = '{input.rmd}', output_file = '{output.html}', output_format = 'html_document', output_dir = '{params.output_dir}')"
         """
 
 ###############################################################################
