@@ -7,8 +7,10 @@ config_file="conf/config.yaml"
 
 # Ensure the environment is activated
 
-if [[ $(basename "${CONDA_PREFIX}") != "code_as_data" ]]; then
-  echo "Retry with CONDA env 'code_as_data'" >&2
+REQUIRED_ENV="code-as-data"
+
+if [[ $(basename "${CONDA_PREFIX}") != "${REQUIRED_ENV}" ]]; then
+  echo "Retry with CONDA env '${REQUIRED_ENV}'" >&2
   exit 1
 fi
 
@@ -19,6 +21,6 @@ for key in "results_dir" "pkg_results_dir" "repo_dir"; do
   if [[ ! -d ${dir} ]]; then mkdir -p ${dir}; fi
 done
 
-# Install any non-conda R-dependencies
+# Ensure the R environment is set up
 
-Rscript "scripts/00-setup-r-env.R" --config "${config_file}"
+Rscript -e "renv::restore()"

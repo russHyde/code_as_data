@@ -47,29 +47,6 @@ task_view_url: https://raw.githubusercontent.com/ropensci/PackageDevelopment/mas
 # {logging}) but had an R/ directory at the top-level, so {dupree} did not fail
 drop: ["logging", "R.oo", "rscala"]
 
-# Which packages must be installed from github for the analyses to be able to
-# run?
-# - any dependencies of these packages should already be installed to the conda
-# environment
-# - we are using the dev version of {dupree} in case any improvements to that
-# package are discovered during development of this project
-# - a remote version of {lintr} is used; this must be installed before {dupree}
-# since it is a dependency of the latter
-#
-remotes:
-  - cloc:
-    repo: "hrbrmstr/cloc"
-    commit: "f1bcd53"
-  - gitsum:
-    repo: "lorenzwalthert/gitsum"
-    commit: "bd98c22"
-  - lintr:
-    repo: "jimHester/lintr"
-    commit: "dbc7624"
-  - dupree:
-    repo: "russHyde/dupree"
-    commit: "3138100"
-
 # ===================== #
 
 # -- Parameters for the analyses
