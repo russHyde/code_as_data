@@ -14,12 +14,12 @@ Once you've got `conda` installed:
 
 ```
 # To create an identical environment (req Ubuntu)
-conda create --name code-as-data --file envs/requirements.txt
+conda create --name code-as-data --file conda/requirements.txt
 ```
 
 ```
 # To create a similar environment
-conda env create --file envs/environment.yml --name code-as-data
+conda env create --file conda/environment.yml --name code-as-data
 ```
 
 Activate the conda environment
