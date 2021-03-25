@@ -13,6 +13,8 @@ repositories = pd.read_table(
 
 packages=repositories["package"].tolist()
 
+reports=config["reports"]
+
 ###############################################################################
 
 def get_github_url(wildcards):
@@ -50,17 +52,39 @@ for k, v in package_specific_suffixes.items():
         suffix=v
     )
 
+pooled_results = [
+    config["pooled_results"][analysis]
+    for analysis in ["gitsum", "cloc", "dupree_benchmarks"]
+]
+
 ###############################################################################
 
 rule all:
     input:
-        config["pooled_results"]["gitsum"],
-        config["pooled_results"]["cloc"],
-        config["pooled_results"]["dupree_benchmarks"]
+        pooled_results,
+        reports
 
 ###############################################################################
 
 # ---- REPORT ---- #
+
+rule render_markdown:
+    message:
+        """
+        --- Render each .Rmd into a .html report
+        """
+
+    input:
+        rmd = join("doc", "{report_name}.Rmd"),
+        results = pooled_results
+
+    output:
+        html = join("doc", "{report_name}.html")
+
+    shell:
+        """
+        Rscript -e "rmarkdown::render(input='{input.rmd}', output='{output.html}', output_format='html_document')"
+        """
 
 ###############################################################################
 
