@@ -25,6 +25,9 @@ pooled_results:
   cloc:              "results/dev-pkg-cloc.tsv"
   gitsum:            "results/dev-pkg-gitsum.tsv"
 
+# Reports that should be created
+reports: ["doc/experiments.html"]
+
 # ===================== #
 
 # -- Definition of which packages should be analysed
