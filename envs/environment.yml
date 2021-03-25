@@ -140,6 +140,7 @@ dependencies:
   - openjpeg=2.4.0
   - openssl=1.1.1j
   - pandas=1.2.3
+  - pandoc=2.12
   - pango=1.42.4
   - paramiko=2.7.2
   - pcre=8.44
