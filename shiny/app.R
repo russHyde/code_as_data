@@ -45,7 +45,8 @@ cloc_barplot <- function(df) {
 ui <- fluidPage(
   titlePanel("Code as data"),
   tableOutput("cloc_summary_table"),
-  plotOutput("cloc_summary_barplot")
+  plotOutput("cloc_summary_barplot"),
+  footer()
 )
 
 server <- function(input, output, session) {
