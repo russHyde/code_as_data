@@ -19,30 +19,6 @@ files <- list(
 
 # Helper functions
 
-summarise_cloc <- function(df) {
-  # collapses the raw cloc dataset (which has one row per file) by package name
-  # taking the total of the lines of code
-  df %>%
-    group_by(package) %>%
-    summarise_if(is.numeric, sum)
-}
-
-summarise_gitsum <- function(df) {
-  df %>%
-    group_by(package) %>%
-    summarise(
-      n_commits = n_distinct(hash),
-      n_contributors = n_distinct(author_email)
-    )
-}
-
-summarise_by_package <- function(cloc_data, gitsum_data) {
-  cloc <- summarise_cloc(cloc_data)
-  gitsum <- summarise_gitsum(gitsum_data)
-
-  dplyr::left_join(gitsum, cloc)
-}
-
 cloc_barplot <- function(df) {
   # takes the package-summarised cloc dataset and produces a barplot, with
   # packages ordered by the total number of actual lines of code
