@@ -12,25 +12,6 @@ dirs <- list(
   app_data = file.path("app-data")
 )
 
-footer <- function() {
-  me <- "Russ Hyde"
-  my_github <- "https://github.com/russHyde"
-  cod_github <- paste(my_github, "code_as_data", sep = "/")
-
-  withTags(
-    nav(
-      # TODO: fix theme - the footer background should be dark but isn't
-      class = "navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark",
-      span(
-        class = "navbar-text",
-        style = "float:right",
-        p("Made by ", a(href = my_github, me), " using Shiny"),
-        p("Code at github: ", a(href = cod_github, "code_as_data"))
-      )
-    )
-  )
-}
-
 # Helper functions
 
 import_pipeline_results <- function() {
