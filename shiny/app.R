@@ -12,13 +12,23 @@ dirs <- list(
   app_data = file.path("app-data")
 )
 
+files <- list(
+  cloc = file.path(dirs[["app_data"]], "dev-pkg-cloc.tsv"),
+  gitsum = file.path(dirs[["app_data"]], "dev-pkg-gitsum.tsv")
+)
+
 # Helper functions
 
-import_pipeline_results <- function() {
-  cloc <- readr::read_tsv(file.path(dirs[["app_data"]], "dev-pkg-cloc.tsv"))
+import_pipeline_results <- function(cloc_file, gitsum_file) {
+  cloc <- readr::read_tsv(cloc_file)
+
+  gitsum <- readr::read_tsv(gitsum_file, col_types = readr::cols()) %>%
+    # for consistency with cloc 'filename' column
+    dplyr::rename(filename = changed_file)
 
   list(
-    cloc = cloc
+    cloc = cloc,
+    gitsum = gitsum
   )
 }
 
@@ -50,7 +60,12 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  data <- reactive(import_pipeline_results())
+  data <- reactive(
+    import_pipeline_results(
+      cloc_file = files[["cloc"]],
+      gitsum_file = files[["gitsum"]]
+    )
+  )
   cloc_summary_table <- reactive(summarise_cloc(data()[["cloc"]]))
 
   output$cloc_summary_table <- renderTable(
