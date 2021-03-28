@@ -20,6 +20,9 @@ files <- list(
 # Helper functions
 
 import_pipeline_results <- function(cloc_file, gitsum_file) {
+  stopifnot(file.exists(cloc_file))
+  stopifnot(file.exists(gitsum_file))
+
   cloc <- readr::read_tsv(cloc_file)
 
   gitsum <- readr::read_tsv(gitsum_file, col_types = readr::cols()) %>%
@@ -38,6 +41,22 @@ summarise_cloc <- function(df) {
   df %>%
     group_by(package) %>%
     summarise_if(is.numeric, sum)
+}
+
+summarise_gitsum <- function(df) {
+  df %>%
+    group_by(package) %>%
+    summarise(
+      n_commits = n_distinct(hash),
+      n_contributors = n_distinct(author_email)
+    )
+}
+
+summarise_by_package <- function(cloc_data, gitsum_data) {
+  cloc <- summarise_cloc(cloc_data)
+  gitsum <- summarise_gitsum(gitsum_data)
+
+  dplyr::left_join(gitsum, cloc)
 }
 
 cloc_barplot <- function(df) {
@@ -66,15 +85,22 @@ server <- function(input, output, session) {
       gitsum_file = files[["gitsum"]]
     )
   )
-  cloc_summary_table <- reactive(summarise_cloc(data()[["cloc"]]))
+
+  data_by_package <- reactive(
+    summarise_by_package(
+      data()[["cloc"]], data()[["gitsum"]]
+    )
+  )
 
   output$cloc_summary_table <- renderTable(
-    cloc_summary_table() %>%
+    data_by_package() %>%
+      select(package, loc, blank_lines, comment_lines) %>%
       head(n = 10)
   )
 
   output$cloc_summary_barplot <- renderPlot(
-    cloc_summary_table() %>%
+    data_by_package() %>%
+      select(package, loc, blank_lines, comment_lines) %>%
       cloc_barplot()
   )
 }
