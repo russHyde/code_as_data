@@ -73,7 +73,7 @@ cloc_barplot <- function(df) {
 
 ui <- fluidPage(
   titlePanel("Code as data"),
-  tableOutput("cloc_summary_table"),
+  dataTableOutput("package_summary_table"),
   plotOutput("cloc_summary_barplot"),
   footer()
 )
@@ -92,10 +92,9 @@ server <- function(input, output, session) {
     )
   )
 
-  output$cloc_summary_table <- renderTable(
-    data_by_package() %>%
-      select(package, loc, blank_lines, comment_lines) %>%
-      head(n = 10)
+  output$package_summary_table <- renderDataTable(
+    data_by_package(),
+    options = list(pageLength = 5)
   )
 
   output$cloc_summary_barplot <- renderPlot(
