@@ -78,9 +78,7 @@ ui <- navbarPage(
   tabPanel("Introduction", intro_ui()),
   tabPanel("Cross-package Analysis", cross_pkg_ui(pkg_statistics)),
   # TODO: tabPanel("Single-package Analysis"),
-  tabPanel(
-    "Analysed Packages", dataTableOutput("analysed_packages")
-  ),
+  tabPanel("Analysed Packages", analysedPackagesUI("pkgs")),
   footer()
 )
 
@@ -105,12 +103,7 @@ server <- function(input, output, session) {
       scatter_by_package("loc", "n_commits", ggplot_labels)
   )
 
-  # TODO: href links for the packages
-  output$analysed_packages <- renderDataTable(
-    raw_data[["cloc"]] %>%
-      dplyr::select(package) %>%
-      unique()
-  )
+  analysedPackagesServer("pkgs", raw_data$cloc)
 }
 
 shinyApp(ui, server)
