@@ -40,26 +40,6 @@ intro_ui <- function() {
   ))
 }
 
-cross_pkg_ui <- function(pkg_statistics) {
-  column(
-    12,
-    dataTableOutput("pkg_summary_table"),
-    sidebarLayout(
-      sidebarPanel(
-        selectInput(
-          "chosen_stat",
-          "Choose a statistic to display",
-          choices = pkg_statistics
-        )
-      ),
-      mainPanel(
-        plotOutput("pkg_summary_barplot")
-      )
-    ),
-    plotOutput("pkg_loc_vs_commits")
-  )
-}
-
 footer <- function() {
   gh <- "https://github.com" # nolint
 
