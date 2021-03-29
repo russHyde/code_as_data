@@ -23,6 +23,11 @@ pkg_statistics <- c(
   "Number of Contributors" = "n_contributors"
 )
 
+raw_data <- import_pipeline_results(
+  cloc_file = files[["cloc"]],
+  gitsum_file = files[["gitsum"]]
+)
+
 # Helper functions
 
 #' Takes the package-summarised dataset and produces a barplot, with packages
@@ -46,7 +51,7 @@ barplot_by_package <- function(df, column) {
 
 ui <- fluidPage(
   titlePanel("Code as data"),
-  dataTableOutput("package_summary_table"),
+  dataTableOutput("pkg_summary_table"),
   sidebarLayout(
     sidebarPanel(
       selectInput(
@@ -61,20 +66,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  data <- reactive(
-    import_pipeline_results(
-      cloc_file = files[["cloc"]],
-      gitsum_file = files[["gitsum"]]
-    )
-  )
-
   data_by_package <- reactive(
-    summarise_by_package(
-      data()[["cloc"]], data()[["gitsum"]]
-    )
+    summarise_by_package(raw_data[["cloc"]], raw_data[["gitsum"]])
   )
 
-  output$package_summary_table <- renderDataTable(
+  output$pkg_summary_table <- renderDataTable(
     data_by_package(),
     options = list(pageLength = 5)
   )
