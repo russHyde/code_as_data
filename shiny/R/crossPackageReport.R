@@ -1,3 +1,8 @@
+library(forcats)
+library(ggplot2)
+library(magrittr)
+library(rlang)
+
 # Helper functions
 
 #' Takes the package-summarised dataset and produces a barplot, with packages

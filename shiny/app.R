@@ -1,10 +1,5 @@
 library(shiny)
 
-library(dplyr)
-library(forcats)
-library(ggplot2)
-library(magrittr)
-
 # Constants
 
 dirs <- list(
