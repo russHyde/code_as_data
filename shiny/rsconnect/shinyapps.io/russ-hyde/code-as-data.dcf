@@ -1,0 +1,12 @@
+name: code-as-data
+title: code-as-data
+username:
+account: russ-hyde
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3880258
+bundleId: 4408369
+url: https://russ-hyde.shinyapps.io/code-as-data/
+when: 1617037282.26077
+asMultiple: FALSE
+asStatic: FALSE
