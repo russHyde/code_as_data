@@ -73,24 +73,19 @@ scatter_by_package <- function(df, x, y, labeller = NULL) {
 
 # App
 
-ui <- fluidPage(
-  titlePanel("Code as data"),
-  dataTableOutput("pkg_summary_table"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput(
-        "chosen_stat", "Choose a statistic to display", choices = pkg_statistics
-      )
-    ),
-    mainPanel(
-      plotOutput("pkg_summary_barplot")
-    )
+ui <- navbarPage(
+  "Code as Data",
+  tabPanel("Introduction", intro_ui()),
+  tabPanel("Cross-package Analysis", cross_pkg_ui(pkg_statistics)),
+  # TODO: tabPanel("Single-package Analysis"),
+  tabPanel(
+    "Analysed Packages", dataTableOutput("analysed_packages")
   ),
-  plotOutput("pkg_loc_vs_commits"),
   footer()
 )
 
 server <- function(input, output, session) {
+  # TODO: module for cross-package analysis
   data_by_package <- reactive(
     summarise_by_package(raw_data[["cloc"]], raw_data[["gitsum"]])
   )
@@ -108,6 +103,13 @@ server <- function(input, output, session) {
   output$pkg_loc_vs_commits <- renderPlot(
     data_by_package() %>%
       scatter_by_package("loc", "n_commits", ggplot_labels)
+  )
+
+  # TODO: href links for the packages
+  output$analysed_packages <- renderDataTable(
+    raw_data[["cloc"]] %>%
+      dplyr::select(package) %>%
+      unique()
   )
 }
 
