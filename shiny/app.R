@@ -46,7 +46,7 @@ barplot_by_package <- function(df, column) {
 
 ui <- fluidPage(
   titlePanel("Code as data"),
-  dataTableOutput("package_summary_table"),
+  dataTableOutput("pkg_summary_table"),
   sidebarLayout(
     sidebarPanel(
       selectInput(
@@ -74,7 +74,7 @@ server <- function(input, output, session) {
     )
   )
 
-  output$package_summary_table <- renderDataTable(
+  output$pkg_summary_table <- renderDataTable(
     data_by_package(),
     options = list(pageLength = 5)
   )
