@@ -1,7 +1,67 @@
 library(glue)
 
+intro_ui <- function() {
+  overview <- withTags(div(
+    h2("Overview"),
+    p("
+      The source code, community and commit history for a range of R packages
+      was analysed.
+    ")
+  ))
+  packages <- withTags(div(
+    h2("Packages"),
+    p(
+      "
+      The list of packages was obtained from the ",
+      a(
+        href = "https://github.com/ropensci/PackageDevelopment/",
+        "ROpenSci/PackageDevelopment"
+      ),
+      r"( task view. Those packages were filtered: keeping only those that are
+      currently on CRAN and github, and for which the repository has a typical
+      `[base]/R/*.R` package structure. The final list of packages can be found
+      in the "Analysed Packages" subsection of this app.
+      )"
+    )
+  ))
+  analyses <- withTags(div(
+    h2("Analyses"),
+    p("
+      The packages were analysed using gitsum (to count commits and identify
+      contributors), dupree (to analyse duplicate code) and cloc (to count the
+      lines-of-code in the package). Only files in the `./R/` subdirectory of
+      each package were analysed.
+    ")
+  ))
+  withTags(div(
+    overview,
+    packages,
+    analyses
+  ))
+}
+
+cross_pkg_ui <- function(pkg_statistics) {
+  column(
+    12,
+    dataTableOutput("pkg_summary_table"),
+    sidebarLayout(
+      sidebarPanel(
+        selectInput(
+          "chosen_stat",
+          "Choose a statistic to display",
+          choices = pkg_statistics
+        )
+      ),
+      mainPanel(
+        plotOutput("pkg_summary_barplot")
+      )
+    ),
+    plotOutput("pkg_loc_vs_commits")
+  )
+}
+
 footer <- function() {
-  gh <- "https://github.com"
+  gh <- "https://github.com" # nolint
 
   gh_links <- list(
     cod = tags$a(href = glue("{gh}/russHyde/code_as_data"), "code_as_data"),
