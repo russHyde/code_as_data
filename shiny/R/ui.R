@@ -6,6 +6,7 @@ footer <- function() {
   gh_links <- list(
     cod = tags$a(href = glue("{gh}/russHyde/code_as_data"), "code_as_data"),
     cloc = tags$a(href = glue("{gh}/hrbrmstr/cloc"), "cloc"),
+    gitsum = tags$a(href = glue("{gh}/lorenzwalthert/gitsum"), "gitsum"),
     me = tags$a(href = glue("{gh}/russHyde"), "Russ Hyde"),
     shiny = tags$a(href = glue("{gh}/rstudio/shiny"), "Shiny")
   )
@@ -19,7 +20,7 @@ footer <- function() {
         style = "float:right",
         p("Made by ", gh_links$me, " using ", gh_links$shiny),
         p("Code at github: ", gh_links$cod),
-        p("Analysis packages: ", gh_links$cloc)
+        p("Analysis packages: ", gh_links$cloc, ", ", gh_links$gitsum)
       )
     )
   )
