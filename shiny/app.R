@@ -16,12 +16,16 @@ files <- list(
   gitsum = file.path(dirs[["app_data"]], "dev-pkg-gitsum.tsv")
 )
 
-# TODO: fix the y-axis label of the barplot to use the label in this vector
+# User selects which statistics to plot / present based on the plain-text in
+# this vector
 pkg_statistics <- c(
   "Lines of Code" = "loc",
   "Number of Commits" = "n_commits",
   "Number of Contributors" = "n_contributors"
 )
+# Axis labels in plots are taken from this vector, so the axis label is
+# "Lines of Code" rather than "loc", for example
+ggplot_labels <- setNames(names(pkg_statistics), pkg_statistics)
 
 raw_data <- import_pipeline_results(
   cloc_file = files[["cloc"]],
@@ -37,14 +41,34 @@ raw_data <- import_pipeline_results(
 #' n_contributors, loc, ...)
 #' @param column   String. Which of the columns within the dataframe should a
 #'   barplot be made for?
-barplot_by_package <- function(df, column) {
+#' @param labeller   A named vector. The y-axis label for `column` is obtained
+#'   from this vector, so the name of an entry should match the value of column.
+#'   If NULL, the y-axis label is the value of `column`.
+#'
+barplot_by_package <- function(df, column, labeller = NULL) {
+  if (is.null(labeller)) {
+    labeller <- setNames(column, column)
+  }
   df %>%
     mutate(
       package = forcats::fct_reorder(package, .data[[column]], .desc = TRUE)
     ) %>%
     ggplot(aes(x = package, y = .data[[column]])) +
     geom_bar(stat = "identity") +
-    guides(x = guide_axis(angle = 90))
+    guides(x = guide_axis(angle = 90)) +
+    labs(x = "Package", y = labeller[[column]])
+}
+
+scatter_by_package <- function(df, x, y, labeller = NULL) {
+  if (is.null(labeller)) {
+    labeller <- setNames(c(x, y), c(x, y))
+  }
+  df %>%
+    ggplot(aes(x = .data[[x]], y = .data[[y]], label = package)) +
+    geom_text() +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(x = labeller[[x]], y = labeller[[y]])
 }
 
 # App
@@ -62,6 +86,7 @@ ui <- fluidPage(
       plotOutput("pkg_summary_barplot")
     )
   ),
+  plotOutput("pkg_loc_vs_commits"),
   footer()
 )
 
@@ -77,7 +102,12 @@ server <- function(input, output, session) {
 
   output$pkg_summary_barplot <- renderPlot(
     data_by_package() %>%
-      barplot_by_package(input$chosen_stat)
+      barplot_by_package(input$chosen_stat, ggplot_labels)
+  )
+
+  output$pkg_loc_vs_commits <- renderPlot(
+    data_by_package() %>%
+      scatter_by_package("loc", "n_commits", ggplot_labels)
   )
 }
 
