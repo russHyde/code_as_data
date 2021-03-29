@@ -18,12 +18,12 @@ files <- list(
 
 # Helper functions
 
-cloc_barplot <- function(df) {
-  # takes the package-summarised cloc dataset and produces a barplot, with
-  # packages ordered by the total number of actual lines of code
+barplot_by_package <- function(df, column) {
+  # takes the package-summarised dataset and produces a barplot, with packages
+  # ordered by a user-selected statistic (lines of code, number of commits etc)
   df %>%
-    mutate(package = forcats::fct_reorder(package, loc, .desc = TRUE)) %>%
-    ggplot(aes(x = package, y = loc)) +
+    mutate(package = forcats::fct_reorder(package, {{ column }}, .desc = TRUE)) %>%
+    ggplot(aes(x = package, y = {{ column }})) +
     geom_bar(stat = "identity") +
     guides(x = guide_axis(angle = 90))
 }
@@ -33,7 +33,7 @@ cloc_barplot <- function(df) {
 ui <- fluidPage(
   titlePanel("Code as data"),
   dataTableOutput("package_summary_table"),
-  plotOutput("cloc_summary_barplot"),
+  plotOutput("pkg_summary_barplot"),
   footer()
 )
 
@@ -56,10 +56,11 @@ server <- function(input, output, session) {
     options = list(pageLength = 5)
   )
 
-  output$cloc_summary_barplot <- renderPlot(
+  # TODO: allow user to choose whether to make barplot of: loc, n_commits,
+  # n_contributors etc
+  output$pkg_summary_barplot <- renderPlot(
     data_by_package() %>%
-      dplyr::select(package, loc, blank_lines, comment_lines) %>%
-      cloc_barplot()
+      barplot_by_package(loc)
   )
 }
 
