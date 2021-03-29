@@ -47,15 +47,15 @@ barplot_by_package <- function(df, column) {
 ui <- fluidPage(
   titlePanel("Code as data"),
   dataTableOutput("package_summary_table"),
-  fluidRow(
-    column(
-      3,
+  sidebarLayout(
+    sidebarPanel(
       selectInput(
-        "chosen_stat",
-        "Choose a statistic to display",
-        choices = pkg_statistics)
+        "chosen_stat", "Choose a statistic to display", choices = pkg_statistics
+      )
     ),
-    column(9, plotOutput("pkg_summary_barplot"))
+    mainPanel(
+      plotOutput("pkg_summary_barplot")
+    )
   ),
   footer()
 )
