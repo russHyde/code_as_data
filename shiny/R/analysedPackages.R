@@ -1,4 +1,5 @@
-# TODO: href links for the packages
+library(glue)
+library(dplyr)
 
 analysedPackagesUI <- function(id) {
   tagList(
@@ -13,9 +14,20 @@ analysedPackagesServer <- function(id, df) {
 
   moduleServer(id, function(input, output, session) {
     output$analysed_packages <- renderDataTable(
-      df %>%
-        dplyr::select(package) %>%
-        unique()
+      format_analysed_packages_table(df),
+      escape = FALSE
     )
   })
+}
+
+format_analysed_packages_table <- function(df) {
+  df %>%
+    dplyr::select(package, remote_repo) %>%
+    dplyr::mutate(remote_repo = convert_urls_to_html(remote_repo)) %>%
+    unique()
+}
+convert_urls_to_html <- function(urls) {
+  glue::glue(
+    "<a href='{urls}'>{urls}</a>"
+  )
 }

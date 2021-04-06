@@ -8,7 +8,8 @@ dirs <- list(
 
 files <- list(
   cloc = file.path(dirs[["app_data"]], "dev-pkg-cloc.tsv"),
-  gitsum = file.path(dirs[["app_data"]], "dev-pkg-gitsum.tsv")
+  gitsum = file.path(dirs[["app_data"]], "dev-pkg-gitsum.tsv"),
+  repositories = file.path(dirs[["app_data"]], "dev-pkg-repositories.tsv")
 )
 
 # User selects which statistics to plot / present based on the plain-text in
@@ -23,10 +24,7 @@ pkg_statistics <- c(
 # "Lines of Code" rather than "loc", for example
 ggplot_labels <- setNames(names(pkg_statistics), pkg_statistics)
 
-raw_data <- import_pipeline_results(
-  cloc_file = files[["cloc"]],
-  gitsum_file = files[["gitsum"]]
-)
+raw_data <- import_pipeline_results(files)
 
 # App
 
@@ -41,7 +39,7 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
   crossPackageReportServer("crossPkg", raw_data, labeller = ggplot_labels)
-  analysedPackagesServer("pkgs", raw_data$cloc)
+  analysedPackagesServer("pkgs", raw_data$repositories)
 }
 
 shinyApp(ui, server)
