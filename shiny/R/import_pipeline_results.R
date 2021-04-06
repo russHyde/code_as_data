@@ -4,6 +4,7 @@ library(readr)
 import_pipeline_results <- function(files) {
   check_file(files, "cloc")
   check_file(files, "gitsum")
+  check_file(files, "repositories")
 
   cloc <- read_silently(files[["cloc"]])
 
@@ -11,9 +12,12 @@ import_pipeline_results <- function(files) {
     # for consistency with cloc 'filename' column
     dplyr::rename(filename = changed_file)
 
+  repos <- read_silently(files[["repositories"]])
+
   list(
     cloc = cloc,
-    gitsum = gitsum
+    gitsum = gitsum,
+    repositories = repos
   )
 }
 

@@ -14,7 +14,7 @@ analysedPackagesServer <- function(id, df) {
   moduleServer(id, function(input, output, session) {
     output$analysed_packages <- renderDataTable(
       df %>%
-        dplyr::select(package) %>%
+        dplyr::select(package, remote_repo) %>%
         unique()
     )
   })

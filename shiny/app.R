@@ -8,7 +8,8 @@ dirs <- list(
 
 files <- list(
   cloc = file.path(dirs[["app_data"]], "dev-pkg-cloc.tsv"),
-  gitsum = file.path(dirs[["app_data"]], "dev-pkg-gitsum.tsv")
+  gitsum = file.path(dirs[["app_data"]], "dev-pkg-gitsum.tsv"),
+  repositories = file.path(dirs[["app_data"]], "dev-pkg-repositories.tsv")
 )
 
 # User selects which statistics to plot / present based on the plain-text in
@@ -38,7 +39,7 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
   crossPackageReportServer("crossPkg", raw_data, labeller = ggplot_labels)
-  analysedPackagesServer("pkgs", raw_data$cloc)
+  analysedPackagesServer("pkgs", raw_data$repositories)
 }
 
 shinyApp(ui, server)
