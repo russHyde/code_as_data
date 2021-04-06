@@ -23,10 +23,7 @@ pkg_statistics <- c(
 # "Lines of Code" rather than "loc", for example
 ggplot_labels <- setNames(names(pkg_statistics), pkg_statistics)
 
-raw_data <- import_pipeline_results(
-  cloc_file = files[["cloc"]],
-  gitsum_file = files[["gitsum"]]
-)
+raw_data <- import_pipeline_results(files)
 
 # App
 
