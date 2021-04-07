@@ -52,8 +52,7 @@ footer <- function() {
   )
 
   withTags(
-    nav(
-      # TODO: fix theme - the footer background should be dark but isn't
+    footer(
       class = "navbar navbar-expand-lg navbar-dark bg-dark",
       span(
         class = "navbar-text",
