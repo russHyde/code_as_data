@@ -26,19 +26,22 @@ ggplot_labels <- setNames(names(pkg_statistics), pkg_statistics)
 
 raw_data <- import_pipeline_results(files)
 
+pkgs <- sort(unique(raw_data[[1]]$package))
+
 # App
 
 ui <- navbarPage(
   "Code as Data",
   tabPanel("Introduction", intro_ui()),
   tabPanel("Cross-package Analysis", crossPackageReportUI("crossPkg", pkg_statistics)),
-  # TODO: tabPanel("Single-package Analysis"),
+  tabPanel("Single-package Analysis", singlePackageReportUI("singlePkg", pkgs)),
   tabPanel("Analysed Packages", analysedPackagesUI("pkgs")),
   footer()
 )
 
 server <- function(input, output, session) {
   crossPackageReportServer("crossPkg", raw_data, labeller = ggplot_labels)
+  singlePackageReportServer("singlePkg", raw_data)
   analysedPackagesServer("pkgs", raw_data$repositories)
 }
 
