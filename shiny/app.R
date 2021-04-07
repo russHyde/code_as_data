@@ -1,6 +1,9 @@
 library(shiny)
+library(bslib)
 
 # Constants
+
+theme <- bslib::bs_theme(bootswatch = "sandstone")
 
 dirs <- list(
   app_data = file.path("app-data")
@@ -36,7 +39,8 @@ ui <- navbarPage(
   tabPanel("Cross-package Analysis", crossPackageReportUI("crossPkg", pkg_statistics)),
   tabPanel("Single-package Analysis", singlePackageReportUI("singlePkg", pkgs)),
   tabPanel("Analysed Packages", analysedPackagesUI("pkgs")),
-  footer()
+  footer(),
+  theme = theme
 )
 
 server <- function(input, output, session) {
