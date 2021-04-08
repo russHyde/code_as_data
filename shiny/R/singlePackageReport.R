@@ -3,6 +3,7 @@ library(forcats)
 library(ggplot2)
 library(magrittr)
 library(purrr)
+library(shinycssloaders)
 
 singlePackageReportUI <- function(id, pkgs) {
   tagList(
@@ -11,7 +12,9 @@ singlePackageReportUI <- function(id, pkgs) {
         selectInput(NS(id, "chosen_pkg"), "Choose a package", choices = pkgs)
       ),
       mainPanel(
-        plotOutput(NS(id, "file_change_plot"))
+        shinycssloaders::withSpinner(
+          plotOutput(NS(id, "file_change_plot"))
+        )
       )
     )
   )
