@@ -39,7 +39,7 @@ ui <- navbarPage(
   tabPanel("Cross-package Analysis", crossPackageReportUI("crossPkg", pkg_statistics)),
   tabPanel("Single-package Analysis", singlePackageReportUI("singlePkg", pkgs)),
   tabPanel("Analysed Packages", analysedPackagesUI("pkgs")),
-  footer(),
+  footer = footer(),
   theme = theme
 )
 
