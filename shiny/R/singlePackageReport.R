@@ -23,8 +23,6 @@ singlePackageReportServer <- function(id, raw_data) {
       purrr::map(raw_data, dplyr::filter, package == input$chosen_pkg)
     )
 
-    output$file_change_table <- renderDataTable(pkg_data()[["gitsum"]])
-
     output$file_change_plot <- renderPlot(
       pkg_data()[["gitsum"]] %>%
         plot_file_commits_by_author()
