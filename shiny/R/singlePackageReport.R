@@ -3,6 +3,7 @@ library(forcats)
 library(ggplot2)
 library(magrittr)
 library(purrr)
+library(shinycssloaders)
 
 singlePackageReportUI <- function(id, pkgs) {
   tagList(
@@ -11,7 +12,9 @@ singlePackageReportUI <- function(id, pkgs) {
         selectInput(NS(id, "chosen_pkg"), "Choose a package", choices = pkgs)
       ),
       mainPanel(
-        plotOutput(NS(id, "file_change_plot"))
+        shinycssloaders::withSpinner(
+          plotOutput(NS(id, "file_change_plot"))
+        )
       )
     )
   )
@@ -22,8 +25,6 @@ singlePackageReportServer <- function(id, raw_data) {
     pkg_data <- reactive(
       purrr::map(raw_data, dplyr::filter, package == input$chosen_pkg)
     )
-
-    output$file_change_table <- renderDataTable(pkg_data()[["gitsum"]])
 
     output$file_change_plot <- renderPlot(
       pkg_data()[["gitsum"]] %>%

@@ -2,6 +2,7 @@ library(forcats)
 library(ggplot2)
 library(magrittr)
 library(rlang)
+library(shinycssloaders)
 
 # Helper functions
 
@@ -46,7 +47,9 @@ scatter_by_package <- function(df, x, y, labeller = NULL) {
 
 crossPackageReportUI <- function(id, pkg_statistics) {
   tagList(
-    dataTableOutput(NS(id, "pkg_summary_table")),
+    shinycssloaders::withSpinner(
+      dataTableOutput(NS(id, "pkg_summary_table"))
+    ),
     sidebarLayout(
       sidebarPanel(
         selectInput(
@@ -56,10 +59,14 @@ crossPackageReportUI <- function(id, pkg_statistics) {
         )
       ),
       mainPanel(
-        plotOutput(NS(id, "pkg_summary_barplot"))
+        shinycssloaders::withSpinner(
+          plotOutput(NS(id, "pkg_summary_barplot"))
+        )
       )
     ),
-    plotOutput(NS(id, "pkg_loc_vs_commits"))
+    shinycssloaders::withSpinner(
+      plotOutput(NS(id, "pkg_loc_vs_commits"))
+    )
   )
 }
 
