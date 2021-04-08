@@ -1,5 +1,30 @@
 # code-as-data
 
+## Introduction
+
+Programming projects grow over time. New contributors join, new features are
+added, complexity increases. As this happens, the version-control history of the
+project becomes a valuable source of data. You might want to know:
+
+- who is the main contributor to this particular file?
+
+- if I change this file, are there any other files that I might need to look at?
+
+- are there any files that should be combined together, or split apart?
+
+![A typical project timeline](figures/project-timeline.png)
+
+Here, we have obtained the source code and version-control history for a range
+of R packages. For each package, the changes to individual files can be mapped
+out over history.
+
+The packages studied were all related to package-development.
+
+There is a shiny-app that presents the results from the analysis
+[at shinyapps.io](https://russ-hyde.shinyapps.io/code-as-data/).
+
+![The workflow for the current project](figures/workflow.png)
+
 ## Environment
 
 This project uses
