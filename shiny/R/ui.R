@@ -53,7 +53,7 @@ footer <- function() {
 
   withTags(
     footer(
-      class = "navbar navbar-expand-lg navbar-dark bg-dark",
+      class = "container-fluid navbar navbar-expand-lg navbar-dark bg-dark",
       span(
         class = "navbar-text",
         style = "float:right",
