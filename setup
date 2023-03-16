@@ -5,15 +5,6 @@ set -euo pipefail
 
 config_file="conf/config.yaml"
 
-# Ensure the environment is activated
-
-REQUIRED_ENV="code-as-data"
-
-if [[ $(basename "${CONDA_PREFIX}") != "${REQUIRED_ENV}" ]]; then
-  echo "Retry with CONDA env '${REQUIRED_ENV}'" >&2
-  exit 1
-fi
-
 # Ensure the results directories are set up
 
 for key in "results_dir" "pkg_results_dir" "repo_dir"; do
