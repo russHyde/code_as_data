@@ -26,6 +26,8 @@ yaml_value() {
 
 ###############################################################################
 
+n_cores="$(yaml_value "${config_file}" "cores")"
+
 # Input data for the project
 task_view_url="$(yaml_value "${config_file}" "task_view_url")"
 
@@ -54,7 +56,7 @@ Rscript "scripts/02-github-details.R" \
 # Clone all repos, run & collapse gitsum / cloc / dupree analysis over all
 # packages
 
-snakemake --snakefile ./Snakefile
+snakemake --snakefile ./Snakefile --cores=${n_cores}
 
 ###############################################################################
 
