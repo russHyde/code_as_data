@@ -34,7 +34,7 @@ reports: ["doc/experiments.html"]
 
 # A CRAN-task-view style document that includes a range of package-development
 # tools
-task_view_url: https://raw.githubusercontent.com/ropensci/PackageDevelopment/master/PackageDevelopment.ctv
+task_view_url: https://raw.githubusercontent.com/ropensci-archive/PackageDevelopment/master/PackageDevelopment.ctv
 
 # Which packages are found on CRAN and in the task-view file, but should not be
 # analysed here:
