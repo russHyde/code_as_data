@@ -2,6 +2,12 @@
 
 # ===================== #
 
+# -- Snakemake options
+
+cores: 1
+
+# ===================== #
+
 # -- Directories and filepaths
 
 # Paths should be specified relative to the repository root
