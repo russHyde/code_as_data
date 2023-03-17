@@ -212,17 +212,17 @@
     },
     "codeAsData": {
       "Package": "codeAsData",
-      "Version": "0.1.1",
+      "Version": "0.1.2",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "codeAsData",
       "RemoteUsername": "russHyde",
       "RemoteRef": "HEAD",
-      "RemoteSha": "6b07dc271685db9bb40854b4c1a9feb0bb45e066",
-      "Hash": "b13ee3758353daf27cffbeb314ebb03a",
+      "RemoteSha": "e2076f61f93a712f145ee8f482766e20f9c8114b",
+      "Hash": "becc156e08ea2992f7a1c5ca7dfc08b3",
       "Requirements": [
-        "xml2"
+        "ctv"
       ]
     },
     "codetools": {
@@ -277,6 +277,14 @@
         "jsonlite",
         "lazyeval"
       ]
+    },
+    "ctv": {
+      "Package": "ctv",
+      "Version": "0.9-4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5dbb34a9fe51de6d27aef2eb8dcb4c29",
+      "Requirements": []
     },
     "curl": {
       "Package": "curl",
