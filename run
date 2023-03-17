@@ -34,7 +34,7 @@ repo_dir="$(yaml_value "${config_file}" "repo_dir")"
 
 # Run each step of the analysis:
 
-Rscript "scripts/01-get-devtools-cran-table.R" \
+Rscript "scripts/01-restrict-cran-to-task-view.R" \
   --config "${config_file}" \
   --url "${task_view_url}" \
   --output "${cran_table}"

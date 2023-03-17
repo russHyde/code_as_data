@@ -210,6 +210,21 @@
         "rstudioapi"
       ]
     },
+    "codeAsData": {
+      "Package": "codeAsData",
+      "Version": "0.1.2",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "codeAsData",
+      "RemoteUsername": "russHyde",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "e2076f61f93a712f145ee8f482766e20f9c8114b",
+      "Hash": "becc156e08ea2992f7a1c5ca7dfc08b3",
+      "Requirements": [
+        "ctv"
+      ]
+    },
     "codetools": {
       "Package": "codetools",
       "Version": "0.2-18",
@@ -262,6 +277,14 @@
         "jsonlite",
         "lazyeval"
       ]
+    },
+    "ctv": {
+      "Package": "ctv",
+      "Version": "0.9-4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5dbb34a9fe51de6d27aef2eb8dcb4c29",
+      "Requirements": []
     },
     "curl": {
       "Package": "curl",
