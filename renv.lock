@@ -210,6 +210,21 @@
         "rstudioapi"
       ]
     },
+    "codeAsData": {
+      "Package": "codeAsData",
+      "Version": "0.1.1",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "codeAsData",
+      "RemoteUsername": "russHyde",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "6b07dc271685db9bb40854b4c1a9feb0bb45e066",
+      "Hash": "b13ee3758353daf27cffbeb314ebb03a",
+      "Requirements": [
+        "xml2"
+      ]
+    },
     "codetools": {
       "Package": "codetools",
       "Version": "0.2-18",
