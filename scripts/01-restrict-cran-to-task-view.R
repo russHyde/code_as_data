@@ -17,8 +17,7 @@ for (pkg in pkgs) {
 define_parser <- function() {
   description <- paste(
     "Obtain a subset of the CRAN package table that has been restricted to",
-    "only those packages mentioned in the package-development CRAN view",
-    "hosted by rOpenSci."
+    "only those packages mentioned in a provided CRAN task-view page."
   )
 
   parser <- OptionParser(
@@ -36,7 +35,7 @@ define_parser <- function() {
     add_option(
       "--url", type = "character",
       help = paste(
-        "A URL that defines a *.ctv file containing a CRAN task-view.",
+        "A URL or filepath that defines a *.ctv or *.md file containing a CRAN task-view.",
         "The CRAN-database entry for any package that is mentioned in this",
         "task view will be included in the output file (unless that package)",
         "is present in the `drop` entry of the config."
@@ -46,7 +45,7 @@ define_parser <- function() {
       c("--output", "-o"), type = "character",
       help = paste(
         "A .tsv for storing the subset of the CRAN database that relates to",
-        "the non-dropped packages present in the task-view .ctv file."
+        "the non-dropped packages present in the task-view file."
       )
     )
 }
@@ -101,20 +100,20 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
   # We identify packages that
   # - are currently on CRAN
   # - have a github URL
-  # - are mentioned on the ROpenSci software development task view
+  # - are mentioned in the task-view page that we are analysing
   # - are not in a set of packages for dropping from the pipeline (drop_pkgs)
 
   stopifnot(dir.exists(dirname(results_file)))
 
   cran_gh <- import_github_cran_table()
-  dev_packages <- codeAsData::import_task_view_packages(task_view_url)
+  task_view_packages <- codeAsData::import_task_view_packages(task_view_url)
 
-  dev_pkg_table <- dplyr::filter(
+  task_view_table <- dplyr::filter(
     cran_gh,
-    package %in% dev_packages & !package %in% drop_pkgs
+    package %in% task_view_packages & !package %in% drop_pkgs
   )
 
-  readr::write_tsv(dev_pkg_table, results_file)
+  readr::write_tsv(task_view_table, results_file)
 }
 
 ###############################################################################
