@@ -4,7 +4,7 @@
 
 # pkgs required for running the script
 general_pkgs <- c("here", "magrittr", "optparse", "yaml")
-pkgs <- c(general_pkgs, "dplyr", "janitor", "tibble", "readr", "xml2")
+pkgs <- c(general_pkgs, "codeAsData", "dplyr", "janitor", "tibble", "readr", "xml2")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -97,23 +97,6 @@ import_github_cran_table <- function() {
 
 ###############################################################################
 
-extract_package_names <- function(xml) {
-  # package names are each stored in a <pkg> tag on the task view page
-  # and the list of <pkg> tags is stored in a <packagelist> tag
-
-  # extract the package names
-  xml %>%
-    xml2::xml_find_all("packagelist/pkg") %>%
-    xml2::xml_text()
-}
-
-import_task_view_packages <- function(url) {
-  xml2::read_xml(url) %>%
-    extract_package_names()
-}
-
-###############################################################################
-
 main <- function(task_view_url, results_file, drop_pkgs = NULL) {
   # We identify packages that
   # - are currently on CRAN
@@ -124,7 +107,7 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
   stopifnot(dir.exists(dirname(results_file)))
 
   cran_gh <- import_github_cran_table()
-  dev_packages <- import_task_view_packages(task_view_url)
+  dev_packages <- codeAsData::import_task_view_packages(task_view_url)
 
   dev_pkg_table <- dplyr::filter(
     cran_gh,
