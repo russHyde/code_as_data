@@ -107,7 +107,7 @@ extract_package_names <- function(xml) {
     xml2::xml_text()
 }
 
-import_dev_package_names <- function(url) {
+import_task_view_packages <- function(url) {
   xml2::read_xml(url) %>%
     extract_package_names()
 }
@@ -124,7 +124,7 @@ main <- function(task_view_url, results_file, drop_pkgs = NULL) {
   stopifnot(dir.exists(dirname(results_file)))
 
   cran_gh <- import_github_cran_table()
-  dev_packages <- import_dev_package_names(task_view_url)
+  dev_packages <- import_task_view_packages(task_view_url)
 
   dev_pkg_table <- dplyr::filter(
     cran_gh,
