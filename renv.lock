@@ -212,17 +212,24 @@
     },
     "codeAsData": {
       "Package": "codeAsData",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "Source": "GitHub",
+      "Remotes": "lorenzwalthert/gitsum",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "codeAsData",
       "RemoteUsername": "russHyde",
       "RemoteRef": "HEAD",
-      "RemoteSha": "e2076f61f93a712f145ee8f482766e20f9c8114b",
-      "Hash": "becc156e08ea2992f7a1c5ca7dfc08b3",
+      "RemoteSha": "18bbd67d8c6eece1c62e209e7942e354de0b0f18",
+      "Hash": "ba9649b08408b36020bda374d670cf85",
       "Requirements": [
-        "ctv"
+        "ctv",
+        "dplyr",
+        "gitsum",
+        "readr",
+        "rlang",
+        "stringr",
+        "tibble"
       ]
     },
     "codetools": {
@@ -340,10 +347,10 @@
     },
     "dplyr": {
       "Package": "dplyr",
-      "Version": "1.1.0",
+      "Version": "1.1.1",
       "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "d3c34618017e7ae252d46d79a1b9ec32",
+      "Repository": "CRAN",
+      "Hash": "eb5742d256a0d9306d85ea68756d8187",
       "Requirements": [
         "R6",
         "cli",
@@ -562,12 +569,11 @@
     },
     "hms": {
       "Package": "hms",
-      "Version": "1.1.2",
+      "Version": "1.1.3",
       "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "41100392191e1244b887878b533eea91",
+      "Repository": "CRAN",
+      "Hash": "b59377caa7ed00fa41808342002138f9",
       "Requirements": [
-        "ellipsis",
         "lifecycle",
         "pkgconfig",
         "rlang",
@@ -853,10 +859,10 @@
     },
     "pillar": {
       "Package": "pillar",
-      "Version": "1.8.1",
+      "Version": "1.9.0",
       "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "f2316df30902c81729ae9de95ad5a608",
+      "Repository": "CRAN",
+      "Hash": "15da5a8412f317beeee6175fbc76f4bb",
       "Requirements": [
         "cli",
         "fansi",
@@ -1259,10 +1265,10 @@
     },
     "tibble": {
       "Package": "tibble",
-      "Version": "3.2.0",
+      "Version": "3.2.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "37695ff125982007d42a59ad10982ff2",
+      "Hash": "a84e2cc86d07289b3b6f5069df7a004c",
       "Requirements": [
         "fansi",
         "lifecycle",
@@ -1349,10 +1355,10 @@
     },
     "vctrs": {
       "Package": "vctrs",
-      "Version": "0.5.2",
+      "Version": "0.6.1",
       "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "e4ffa94ceed5f124d429a5a5f0f5b378",
+      "Repository": "CRAN",
+      "Hash": "06eceb3a5d716fd0654cc23ca3d71a99",
       "Requirements": [
         "cli",
         "glue",
