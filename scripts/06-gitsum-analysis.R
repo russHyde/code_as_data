@@ -4,7 +4,7 @@
 
 # pkgs require for running the script
 general_pkgs <- c("here", "magrittr", "optparse")
-pkgs <-  c(general_pkgs, "dplyr", "gitsum", "readr", "stringr", "tibble")
+pkgs <-  c(general_pkgs, "codeAsData")
 
 for (pkg in pkgs) {
   suppressPackageStartupMessages(
@@ -48,22 +48,19 @@ define_parser <- function() {
 
 ###############################################################################
 
-get_gitsum_results <- function(path, .package) {
-  gitsum::init_gitsum(path, over_write = TRUE)
-
-  gitsum::parse_log_detailed(path) %>%
-    gitsum::unnest_log() %>%
-    gitsum::set_changed_file_to_latest_name() %>%
-    dplyr::filter(stringr::str_starts(changed_file, "R/")) %>%
-    tibble::add_column(package = .package, .before = 1)
-}
-
-###############################################################################
-
 main <- function(local_repo, package, results_file) {
-  gitsum_results <- get_gitsum_results(local_repo, package)
-
-  readr::write_tsv(gitsum_results, results_file)
+  # This
+  # - runs gitsum on a repo,
+  # - imports the gitsum results,
+  # - cleans them up (so there is only data for R/ files, and a single row per changed file per
+  # commit); and
+  # - exports the cleaned up data as a .tsv
+  codeAsData::run_gitsum_workflow(
+    repo_path = local_repo,
+    output_path = results_file,
+    package = package,
+    r_dir_only = TRUE
+  )
 }
 
 ###############################################################################
